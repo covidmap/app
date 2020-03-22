@@ -1,0 +1,73 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: covidmap
+  labels:
+    app: covidmap
+    role: cache
+    environment: production
+spec:
+  ports:
+    - port: 6379
+      protocol: TCP
+      name: tls-redis
+  selector:
+    app: covidmap
+    role: cache
+    environment: production
+  type: NodePort
+  publishNotReadyAddresses: yes
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: covidmap
+  namespace: covidmap
+  labels:
+    app: covidmap
+    role: server
+    environment: production
+spec:
+  ports:
+    - name: tls-app
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: tls-rpc
+      port: 8083
+      protocol: TCP
+      targetPort: 8083
+  selector:
+    app: covidmap
+    role: server
+    environment: production
+  type: NodePort
+  publishNotReadyAddresses: yes
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: covidmap
+  labels:
+    app: covidmap
+    role: gateway
+    environment: production
+  annotations:
+    cloud.google.com/neg: '{"exposed_ports": {"8443": {}}}'
+    cloud.google.com/app-protocols: '{"tls-proxy": "HTTP2"}'
+    cloud.google.com/backend-config: '{"ports": {"8443":"covidmap-server"}}'
+spec:
+  ports:
+    - name: tls-proxy
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+  selector:
+    app: covidmap
+    role: gateway
+    environment: production
+  type: NodePort
+  publishNotReadyAddresses: yes

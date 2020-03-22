@@ -1,0 +1,134 @@
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+load(
+    "@gust//defs/toolchain:schema.bzl",
+    "service",
+)
+
+load(
+    "@gust//defs/toolchain:deps.bzl",
+    "maven",
+)
+
+load(
+    "@gust//defs/toolchain:backend.bzl",
+    "micronaut_library",
+    "micronaut_service",
+    "micronaut_controller",
+    "micronaut_application",
+    "micronaut_interceptor",
+)
+
+
+exports_files([
+    "api.yml",
+    "application.yml",
+    "logback.xml",
+    "reflection.json",
+])
+
+service(
+    name = "covidmap_proto",
+    srcs = ["covidmap.proto"],
+    deps = [
+        "@gust//gust/page:media_proto",
+        "@proto_common//:type_month",
+        "@proto_common//:type_latlng",
+        "@proto_common//:type_timeofday",
+        "@proto_common//google/api:annotations_proto",
+        "@proto_common//google/api:client_proto",
+        "@proto_common//google/api:field_behavior",
+        "@com_google_protobuf//:empty_proto",
+        "@com_google_protobuf//:timestamp_proto",
+        "@com_google_protobuf//:field_mask_proto",
+    ]
+)
+
+
+alias(
+    name = "frontend",
+    actual = "//src/frontend:app",
+)
+
+alias(
+    name = "home_soy",
+    actual = "//src/templates:home_soy",
+)
+
+micronaut_interceptor(
+    name = "CovidmapInterceptor",
+    srcs = ["server/CovidmapInterceptor.kt"],
+)
+
+micronaut_library(
+    name = "ReflectionService",
+    srcs = ["server/ReflectionService.kt"],
+    deps = [
+        maven("io.grpc:grpc-api"),
+        maven("io.grpc:grpc-services"),
+    ],
+)
+
+micronaut_library(
+    name = "CovidmapLogic",
+    srcs = ["server/CovidmapLogic.kt"],
+    proto_deps = [":covidmap_proto"],
+)
+
+micronaut_service(
+    name = "AppService",
+    srcs = ["server/AppService.kt"],
+    services = [":covidmap_proto"],
+    deps = [
+        ":CovidmapLogic",
+        ":CovidmapInterceptor",
+    ],
+)
+
+micronaut_controller(
+    name = "HomeController",
+    srcs = ["server/HomeController.kt"],
+    templates = ["//src/templates:home_soy"],
+    proto_deps = [":covidmap_proto"],
+    deps = [
+        ":CovidmapLogic",
+        "@gust//java/gust/backend/annotations:annotations",
+    ],
+)
+
+micronaut_application(
+    # -- App Info -- #
+    name = "CovidMapServer",
+    config = ":application.yml",
+    logging_config = ":logback.xml",
+    ports = ["8081", "8082"],
+
+    # -- Controllers -- #
+    controllers = [
+        ":HomeController",
+    ],
+
+    services = [
+        ":AppService",
+        ":ReflectionService",
+    ],
+
+    js_modules = {
+        "covidmap.main": "//src/frontend:app",
+    },
+
+    css_modules = {
+        "covidmap.mdl": "//src/frontend:mdl",
+        "covidmap.styles": "//src/frontend:styles",
+    },
+
+    # -- Publishing / Images -- #
+    native = False,
+    tag = "$(covidmap_release_tag)",
+    repository = "covid-impact-map/jvm",
+    native_repository = "covid-impact-map/native",
+    reflection_configuration = ":reflection.json",
+)

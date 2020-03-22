@@ -1,0 +1,99 @@
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+load(
+    "@gust//defs/toolchain:deps.bzl",
+    "closure",
+    "js_proto",
+    "js_service",
+)
+
+load(
+    "@gust//defs/toolchain:crosslib.bzl",
+    "cross_lib",
+)
+
+load(
+    "@gust//defs/toolchain:frontend.bzl",
+    "js_app",
+    "js_module",
+)
+
+load(
+    "@gust//defs/toolchain/style:rules.bzl",
+    "style_binary",
+    "style_library",
+)
+
+
+## Frontend: Styles
+
+style_library(
+    name = "style-base",
+    srcs = ["_base.scss"],
+    deps = [
+        ":style-vars",
+    ],
+)
+
+style_library(
+    name = "style-vars",
+    srcs = ["_vars.scss"],
+    deps = [
+        "@gust//style:vars",
+    ],
+)
+
+style_binary(
+    name = "mdl",
+    deps = [
+        "@mdl//:animation-styles",
+        "@mdl//:button-styles",
+        "@mdl//:typography-styles",
+        "@mdl//:ripple-styles",
+        "@mdl//:card-styles",
+        "@mdl//:layout-styles",
+    ],
+)
+
+style_binary(
+    name = "styles",
+    src = "app.scss",
+    deps = [
+        ":style-base",
+    ],
+)
+
+
+## Frontend: JS
+
+js_module(
+    name = "api",
+    srcs = ["api.js"],
+    deps = [
+        "@gust//js/gust:logging",
+        "@gust//java/gust:Core-j2cl",
+        js_service("//src:covidmap_proto"),
+        js_proto("@gust//js:empty_proto"),
+    ],
+)
+
+js_module(
+    name = "main",
+    srcs = ["main.js"],
+    deps = [
+        ":api",
+        "@gust//js/gust:logging",
+    ],
+)
+
+js_app(
+    name = "app",
+    entry_points = ["covidmap.main"],
+    deps = [
+        ":main",
+    ],
+)
+

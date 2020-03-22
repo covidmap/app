@@ -1,0 +1,17 @@
+
+@import "_vars.scss";
+
+body.covidmap {
+  background: $app-color-primary;
+  color: $app-color-text;
+  font-family: $app-font-family-primary;
+
+  .mdl-layout__header {
+    color: $app-color-text;
+    user-select: none;
+  }
+
+  .mdl-layout__header-row .mdl-navigation__link {
+    color: $app-color-text;
+  }
+}

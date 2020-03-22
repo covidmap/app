@@ -1,0 +1,5 @@
+node_modules/
+bazel-out/
+dist/
+bazel-out
+.DS_Store

@@ -1,0 +1,16 @@
+
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+load(
+    "@gust//defs/toolchain:templates.bzl",
+    "ssr_library",
+)
+
+ssr_library(
+    name = "home_soy",
+    srcs = ["home.soy"],
+    proto_deps = ["//src:covidmap_proto"],
+)

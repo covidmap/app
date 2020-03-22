@@ -1,0 +1,188 @@
+
+gust:
+  serving:
+    language: en-US
+
+    etags:
+      enabled: yes
+      strong: on
+      match: on
+
+    vary:
+      enabled: yes
+      accept: on
+      charset: off
+      encoding: on
+      language: off
+      origin: off
+
+    additionalHeaders:
+      X-Content-Type-Options: nosniff
+
+  assets:
+    etags: on
+    lastModified: on
+    noSniff: on
+
+    cdn:
+      enabled: no
+      hostnames:
+        - 1.cdn.todo.elide.deliver
+        - 2.cdn.todo.elide.deliver
+
+    vary:
+      enabled: yes
+      accept: yes
+      language: no
+      charset: no
+      origin: no
+
+    compression:
+      enabled: yes
+      vary: on
+      modes:
+        - GZIP
+        - BROTLI
+
+    caching:
+      enabled: no
+      mode: public
+      shared: true
+      additionalDirectives:
+        - immutable
+
+micronaut:
+  application:
+    name: COVID Impact Map
+
+  server:
+    server-header: K9v5
+    maxRequestSize: 10MB
+    host: 0.0.0.0
+    port: 8080
+
+    cors:
+      enabled: false
+
+    netty:
+      maxHeaderSize: 500KB
+      chunked-supported: true
+      use-native-transport: true
+      compression-level: 2
+      compression-threshold: 1024
+      parent:
+        threads: 4
+      worker:
+        threads: 4
+      epoll:
+        options:
+          tcpFastopen: 128
+          tcpQuickack: true
+      childOptions:
+        soKeepalive: true
+
+  validator:
+    enabled: true
+
+  session:
+    enabled: true
+    http:
+      cookie: true
+      header: false
+      redis:
+        enabled: true
+        cookie: true
+        header: true
+        namespace: 'covidmap:sessions'
+        write-mode: BACKGROUND
+        enable-keyspace-events: true
+        valueSerializer: io.micronaut.jackson.serialize.JacksonObjectSerializer
+
+  security:
+    enabled: true
+    session:
+      enabled: true
+      login-success-target-url: /app
+      login-failure-target-url: /login
+      unauthorized-target-url: /login
+      logout-target-url: /logout
+      legacy-rejection-handler: false
+    endpoints:
+      login:
+        enabled: true
+        path: /login/go
+      logout:
+        enabled: true
+        get-allowed: true
+        path: /logout
+
+  views:
+    soy:
+      enabled: true
+      engine: sauce
+      renaming: false
+
+    csp:
+      enabled: true
+      generateNonce: true
+      reportOnly: false
+      policyDirectives: "default-src 'self' https:; font-src data: https://fonts.gstatic.com; script-src-elem 'self' https://static.cloudflareinsights.com 'nonce-{#nonceValue}';"
+
+  executors:
+    io:
+      type: fixed
+      nThreads: 4
+
+  config-client:
+    enabled: true
+
+grpc:
+  server:
+    port: 8083
+    keep-alive-time: 1h
+
+  client:
+    plaintext: true
+    max-retry-attempts: 10
+
+graphql:
+  enabled: true
+  path: /_/graph
+  graphiql:
+    enabled: false
+    version: 0.13.2
+    path: /_/admin/graphiql
+    page-title: "Dashboard - GraphiQL"
+
+kubernetes:
+  client:
+    discovery:
+      enabled: true
+    config-maps:
+      enabled: true
+    secrets:
+      enabled: true
+
+redis:
+  uri: redis://fcache
+  caches:
+    covidmap:
+      expire-after-access: 4h
+
+endpoints:
+  beans:
+    enabled: true
+    sensitive: false
+  info:
+    enabled: true
+    sensitive: false
+
+tracing:
+  zipkin:
+    enabled: true
+    sampler: probability=1.0
+
+gcp:
+  project-id: covid-impact-map
+  tracing:
+    enabled: true

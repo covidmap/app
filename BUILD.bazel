@@ -1,0 +1,26 @@
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+
+alias(
+    name = "covidmap",
+    actual = "//src:CovidMapServer",
+)
+
+alias(
+    name = "container",
+    actual = "//src:CovidMapServer-image",
+)
+
+alias(
+    name = "gateway",
+    actual = "//src/config/gateway:gateway",
+)
+
+alias(
+    name = "app",
+    actual = "covidmap",
+)
+

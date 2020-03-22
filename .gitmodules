@@ -1,0 +1,4 @@
+[submodule "gust"]
+	path = vendor/gust
+	url = git@github.com:sgammon/gust.git
+	branch = fixes/covidmap

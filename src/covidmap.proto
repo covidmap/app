@@ -1,0 +1,51 @@
+
+/**
+ * coming soon
+ */
+syntax = "proto3";
+
+package covidmap;
+
+option optimize_for = SPEED;
+option cc_enable_arenas = true;
+option java_multiple_files = true;
+option java_string_check_utf8 = true;
+option java_outer_classname = "COVIDMapApp";
+option php_namespace = "ElideSamples";
+option php_class_prefix = "TDL";
+option swift_prefix = "COVIDMap";
+option objc_class_prefix = "TDL";
+option ruby_package = "CovidMap::Schema";
+option java_package = "covidmap.schema";
+option csharp_namespace = "CovidMap.Schema";
+option go_package = "github.com/covidmap/app;covidmap";
+
+import "google/type/month.proto";
+import "google/type/latlng.proto";
+import "google/type/timeofday.proto";
+
+import "google/api/client.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "webutil/html/types/html.proto";
+
+import "gust/page/media.proto";
+import "gust/core/datamodel.proto";
+
+
+// Defines the main API that powers the COVID Impact Map application.
+service App {
+  option (google.api.default_host) = "rpc.covidmap.link";
+
+  // Execute a simple health check against the `App` service. Perform any local logic needed to ensure the service is up
+  // and ready to receive traffic. If the service is not ready, a regular protocol error will be returned - if it is,
+  // the result is an empty successful response.
+  rpc Health(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http).get = "/v1/health";
+  }
+}

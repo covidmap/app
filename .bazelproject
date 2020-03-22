@@ -1,0 +1,25 @@
+directories:
+  src
+  config
+  tools
+  external
+  -vendor/
+
+workspace_type: java
+java_language_level: 11
+
+targets:
+  //src/...
+
+ts_config_rules:
+  //:tsconfig.json
+
+test_sources:
+  - */tests/*
+
+additional_languages:
+  java
+  kotlin
+  javascript
+  typescript
+

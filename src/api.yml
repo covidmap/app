@@ -1,0 +1,105 @@
+
+type: google.api.Service
+config_version: 3
+
+name: covidmap.elide.tools
+title: COVID Impact Map API
+
+apis:
+  - name: covidmap.App
+
+authentication:
+  providers:
+    - id: firebase
+      jwks_uri: https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com
+      issuer: https://securetoken.google.com/covid-impact-map
+
+  rules:
+    - selector: covidmap.App.*
+      requirements:
+        - provider_id: firebase
+
+endpoints:
+  - name: covidmap.elide.tools
+    target: covidmap.elide.tools
+    allow_cors: false
+
+system_parameters:
+  rules:
+    - selector: "*"
+      parameters:
+        - name: api_key
+          url_query_parameter: key
+        - name: api_key
+          http_header: X-API-Key
+        - name: trace
+          http_header: X-API-Trace-ID
+
+enums:
+  - covidmap.AppError
+
+metrics:
+  - name: "class-a-ops"
+    display_name: "COVID Map Operations: Class A"
+    description: "Generic read-only operations executed against the COVID Impact Map API."
+    value_type: INT64
+    metric_kind: DELTA
+
+  - name: "class-b-ops"
+    display_name: "COVID Map Operations: Class B"
+    description: "Generic write or query operations executed against the COVID Impact Map API."
+    value_type: INT64
+    metric_kind: DELTA
+
+quota:
+  limits:
+    ## Project-level Quotas
+    - name: "project-class-a-ops"
+      metric: "class-a-ops"
+      unit: "1/min/{project}"
+      display_name: "Project Quota: COVID Impact Map Class A Ops"
+      description: "Project-based quota for Class A (Read-Only) operations."
+      values:
+        STANDARD: 240
+    - name: "project-class-b-ops"
+      metric: "class-b-ops"
+      unit: "1/min/{project}"
+      display_name: "Project Quota: COVID Impact Map Class B Ops"
+      description: "Project-based quota for Class B (Write/Query) operations."
+      values:
+        STANDARD: 120
+
+  metric_rules:
+    - selector: covidmap.App.*
+      metric_costs:
+        class-a-ops: 1
+
+usage:
+  rules:
+    - selector: "covidmap.App.*"
+      allow_unregistered_calls: false
+
+documentation:
+  summary: >
+    Provides an API for interfacing with the COVID Impact Map application and dataset.
+
+  pages:
+    - name: Overview
+      content: >
+        # Cloud API
+
+        ## Overview
+        Coming soon.
+
+      subpages:
+        - name: Getting Started
+          content: >
+            ## Cloud API: Getting Started
+            Coming soon.
+
+  rules:
+    - selector: covidmap.App.Health
+      description: >
+        Check the health of the COVID Impact Map API. If systems are running smoothly, an empty successful response will
+        be returned. If not, the request will fail with some enumerated error case describing why the system isn't
+        ready to receive requests.

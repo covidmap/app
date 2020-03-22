@@ -1,0 +1,19 @@
+
+steps:
+  - command: "make build CI=yes QUIET=no"
+    label: ":bazel: Build: App"
+    key: framework-build
+
+  - command: "make build test report-coverage report-tests CI=yes QUIET=no"
+    label: ":coverage: Testsuite"
+    depends_on: framework-build
+    artifact_paths:
+      - "reports/coverage/index.html"
+      - "reports/coverage.tar.gz"
+      - "reports/tests.xml.html"
+
+  - wait
+
+  - command: "docker pull us.gcr.io/elide-tools/base/alpine"
+    label: ":docker: Pull Bases"
+
