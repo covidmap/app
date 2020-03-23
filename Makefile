@@ -14,10 +14,19 @@ STRICT ?= no
 BASE_ARGS ?=
 BAZELISK_ARGS ?=
 CACHE_KEY ?= CovidMap
+RELEASE ?= no
 
 PROJECT ?= bloom-sandbox
 RBE_INSTANCE ?= default_instance
 IMAGE_PROJECT ?= covid-impact-map
+
+
+# Flag: `RELEASE`
+ifeq ($(RELEASE),yes)
+ARGS += --compilation_mode=opt
+else
+ARGS += --compilation_mode=dbg
+endif
 
 # Flag: `CI`
 ifeq ($(CI),yes)
