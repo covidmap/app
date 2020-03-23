@@ -15,9 +15,7 @@ import javax.inject.Inject
 
 
 /**
- * COVID Impact Map homepage controller - responsible for serving the homepage, with a little preview of the app, with
- * the ability to use it (anonymously / ephemerally). It also offers the ability to sign in and persist one's tasks. The
- * homepage UI is defined in Soy, and styled in SASS.
+ * COVID Impact Map homepage controller - responsible for serving the homepage.
  */
 @Controller
 @Secured("isAnonymous()")
@@ -31,8 +29,7 @@ class HomeController @Inject constructor(ctx: PageContextManager): AppController
   }
 
   /**
-   * `/` (`HTTP GET`): Handler for the root homepage for COVID Impact Map - i.e. `/`. Serves the preview page if the
-   * user isn't logged in, or the regular app page & container if they are.
+   * `/` (`HTTP GET`): Handler for the root homepage for COVID Impact Map - i.e. `/`.
    */
   @View("covidmap.home.page")
   @Get("/", produces = ["text/html;charset=UTF-8"])
