@@ -5,6 +5,10 @@ directories:
   external
   -vendor/
 
+build_flags:
+  --config=dev
+  --define=covidmap_release_tag=latest
+
 workspace_type: java
 java_language_level: 11
 
