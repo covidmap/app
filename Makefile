@@ -3,7 +3,9 @@
 # COVIDMAP: Makefile
 #
 
-ARGS ?=
+VERSION ?= v1
+
+ARGS ?= --define=covidmap_version=$(VERSION)
 CI ?= no
 APP ?= //:app
 TARGETS ?= $(APP)
