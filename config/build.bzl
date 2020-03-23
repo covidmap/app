@@ -17,11 +17,10 @@ DEPS = {
     "covidmap_ui": {
         "type": "github",
         "repo": "covidmap/ui",
-        "forceLocal": True,
         "local": "/workspace/covidmap/ui",
-        "target": "dfb8ac90e7ecadd04c081ebe390375bd99416775",
+        "target": "d4c26761b2634f923e5ae0f53acaf0c2f02bf85f",
         "overlay": "covidmap_ui.bzl",
-        "seal": "d14b4aeb40691382b505813c4c8adf89a93ac678cc09ae3ba0e0254e9de9ac6e"},
+        "seal": "a84471c25a6e5a261214b2f8af90e651c41dba280bea66dcd793ee75ee41b92c"},
 }
 
 
