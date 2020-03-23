@@ -1,5 +1,5 @@
 
-## COVID Impact Map
+## COVID Impact Map  [![Build status](https://badge.buildkite.com/f3cfe4096b4a4624c50ef31a9075fba4898ea34c6bc6ff731d.svg)](https://buildkite.com/bloomworks/covid-impact-map)
 
 *Coming soon.*
 
