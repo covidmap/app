@@ -48,6 +48,7 @@ style_library(
 
 style_binary(
     name = "mdl",
+    optimize = True,
     deps = [
         "@mdl//:animation-styles",
         "@mdl//:button-styles",
@@ -61,6 +62,7 @@ style_binary(
 style_binary(
     name = "styles",
     src = "app.scss",
+    optimize = True,
     deps = [
         ":style-base",
     ],
@@ -85,6 +87,7 @@ js_module(
     srcs = ["main.js"],
     deps = [
         ":api",
+        "//src/core:AppConfig-j2cl",
         "@gust//js/gust:logging",
     ],
 )

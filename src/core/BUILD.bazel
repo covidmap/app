@@ -1,0 +1,30 @@
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+load(
+    "@gust//defs/toolchain:crosslib.bzl",
+    "cross_lib",
+)
+
+load(
+    "@gust//defs/toolchain:frontend.bzl",
+    "js_module",
+)
+
+
+js_module(
+    name = "CoreModule",
+    srcs = ["module.js"],
+)
+
+cross_lib(
+    name = "AppConfig",
+    srcs = [
+        "AppConfig.java",
+    ],
+    jsdeps = [
+        ":CoreModule",
+    ],
+)

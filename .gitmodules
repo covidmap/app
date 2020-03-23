@@ -2,3 +2,7 @@
 	path = vendor/gust
 	url = git@github.com:sgammon/gust.git
 	branch = fixes/covidmap
+[submodule "ui"]
+	path = ui
+	url = git@github.com:covidmap/ui.git
+

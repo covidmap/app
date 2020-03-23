@@ -22,6 +22,26 @@ load(
     "micronaut_interceptor",
 )
 
+load(
+    "@npm_bazel_labs//:index.bzl",
+    "ts_proto_library",
+)
+
+load(
+    "@npm_bazel_rollup//:index.bzl",
+    "rollup_bundle",
+)
+
+load(
+    "@npm_bazel_terser//:index.bzl",
+    "terser_minified",
+)
+
+load(
+    "@npm_bazel_typescript//:index.bzl",
+    "ts_config",
+)
+
 
 exports_files([
     "api.yml",
@@ -73,6 +93,11 @@ micronaut_library(
 )
 
 micronaut_library(
+    name = "ExternalResources",
+    srcs = ["server/ExternalResources.kt"],
+)
+
+micronaut_library(
     name = "CovidmapLogic",
     srcs = ["server/CovidmapLogic.kt"],
     proto_deps = [":covidmap_proto"],
@@ -95,6 +120,7 @@ micronaut_controller(
     proto_deps = [":covidmap_proto"],
     deps = [
         ":CovidmapLogic",
+        ":ExternalResources",
         "@gust//java/gust/backend/annotations:annotations",
     ],
 )
@@ -117,11 +143,13 @@ micronaut_application(
     ],
 
     js_modules = {
-        "covidmap.main": "//src/frontend:app",
+        "covidmap.main": "//src/frontend:app.js",
+        "covidmap.ui": "@covidmap_ui//:ui.js",
     },
 
     css_modules = {
         "covidmap.mdl": "//src/frontend:mdl",
+        "covidmap.skin": "@covidmap_ui//:ui",
         "covidmap.styles": "//src/frontend:styles",
     },
 

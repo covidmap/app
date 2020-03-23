@@ -10,8 +10,8 @@ load(
 
 
 LOCAL = False
-GUST_VERSION = "14e86e95739944e439e03d5f8e0622397ace6b51"
-GUST_FINGERPRINT = "2482d32a30c9eeef6eee9e188de92d5b22ebd9b053e17735b9691f5c6799141c"
+GUST_VERSION = "b239ea34db014a09536b9762e0e21e68a1e0c231"
+GUST_FINGERPRINT = "fea17b9486e314a1038c8ac7f57344b0f799a5210695f852b446910c589799ea"
 
 (local_repository(
     name = "gust",
@@ -27,8 +27,8 @@ GUST_FINGERPRINT = "2482d32a30c9eeef6eee9e188de92d5b22ebd9b053e17735b9691f5c6799
 load("@gust//defs:build.bzl", "install_dependencies")
 load("@//config:build.bzl", app_dependencies = "install_dependencies")
 load("@gust//defs:config.bzl", "CHROMIUM", "FIREFOX", "SAUCE", "GRAALVM_VERSION", "GRAALVM_JDK_VERSION", "K8S_VERSION")
-install_dependencies()
-app_dependencies()
+install_dependencies(LOCAL)
+app_dependencies(LOCAL)
 
 load("@gust//defs:workspace.bzl", "setup_workspace")
 setup_workspace()

@@ -2,16 +2,60 @@
 @import "_vars.scss";
 
 body.covidmap {
-  background: $app-color-primary;
   color: $app-color-text;
   font-family: $app-font-family-primary;
+  background-color: $app-gradient-begin;
+  background: linear-gradient(45deg, $app-gradient-begin 0%,$app-gradient-end 100%);
 
   .mdl-layout__header {
-    color: $app-color-text;
+    color: $app-color-primary;
     user-select: none;
+
+    .mdl-layout__header-row {
+      nav {
+        margin-left: 30px;
+        justify-content: flex-start;
+      }
+    }
   }
 
   .mdl-layout__header-row .mdl-navigation__link {
-    color: $app-color-text;
+    color: $app-color-primary;
+  }
+
+  .mdl-layout__content {
+    color: $app-color-primary;
+    background: $app-color-primary;
+  }
+}
+
+.mdl-navigation__link {
+  transition-property: background,color;
+  transition-duration: 200ms;
+  font-size: 14pt;
+
+  &:hover {
+    background: #333 !important;
+    color: #fefefe !important;
+  }
+
+  &.active {
+    font-weight: bold;
+    pointer-events: none !important;
+  }
+}
+
+.loading-box {
+  display: flex;
+  background: rgba(51, 51, 51, 1);
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+
+  b {
+    color: #fefefe;
+    background: rgba(51, 51, 51, 0.75);
+    padding: 30px;
   }
 }
