@@ -3,7 +3,7 @@
 # COVIDMAP: Makefile
 #
 
-ARGS ?= --config=dev
+ARGS ?=
 CI ?= no
 APP ?= //:app
 TARGETS ?= $(APP)
@@ -19,6 +19,13 @@ CACHE_KEY ?= CovidMap
 PROJECT ?= bloom-sandbox
 RBE_INSTANCE ?= default_instance
 IMAGE_PROJECT ?= covid-impact-map
+
+# Flag: `CI`
+ifeq ($(CI),yes)
+ARGS += --config=ci
+else
+ARGS += --config=dev
+endif
 
 # Flag: `STRICT`.
 ifeq ($(STRICT),yes)
