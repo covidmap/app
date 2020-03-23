@@ -3,7 +3,7 @@
 # COVIDMAP: Makefile
 #
 
-VERSION ?= v1a
+VERSION ?= v1b
 
 ARGS ?= --define=covidmap_version=$(VERSION)
 CI ?= no
