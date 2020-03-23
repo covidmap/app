@@ -16,9 +16,9 @@ DEPS = {
     "covidmap_ui": {
         "type": "github",
         "repo": "covidmap/ui",
-        "target": "9b9e1f2160ed82fedc9fcf76b057188f58c9c580",
+        "target": "a8627a9d2293569273efc08316464c1aa2e9e6cc",
         "overlay": "covidmap_ui.bzl",
-        "seal": "a58e45b08d2459f792dd75af290ba72bd75794088414584786f08debf70528bc"},
+        "seal": "018f36145940761fe987c3360f090010e8a9fa2c0884a91c6d3d040f3487f752"},
 }
 
 
