@@ -34,6 +34,8 @@ class HomeController @Inject constructor(ctx: PageContextManager): AppController
           .setUri(this.trustedResource(URI.create(ExternalResources.Firebase.app))))
         .script(Context.Scripts.JavaScript.newBuilder()
           .setUri(this.trustedResource(URI.create(ExternalResources.Firebase.analytics))))
+        .script(Context.Scripts.JavaScript.newBuilder()
+          .setUri(this.trustedResource(URI.create(ExternalResources.Maps.js))))
         .script("covidmap.ui")
         .script("covidmap.main"))
   }

@@ -1,5 +1,7 @@
 package server
 
+import core.AppConfig
+
 
 /** Holds links to external resources. */
 object ExternalResources {
@@ -8,6 +10,12 @@ object ExternalResources {
 
   // Prefix to use for Firebase assets.
   const val firebasePrefix = "https://www.gstatic.com/firebasejs/"
+
+  /** References for Google Maps. */
+  object Maps {
+    /** JS URL for Google Maps. */
+    val js = "https://maps.googleapis.com/maps/api/js?callback=__init_map&key=${AppConfig.getApiKey()}"
+  }
 
   /** References to Firebase JS. */
   object Firebase {

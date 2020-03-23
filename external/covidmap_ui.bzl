@@ -158,3 +158,11 @@ alias(
         "//conditions:default": ":bundle.dev.js",
     }),
 )
+
+alias(
+    name = "ui.js.map",
+    actual = select({
+        "@gust//defs/config:release": ":bundle.min.js.map",
+        "//conditions:default": ":bundle.dev.js.map",
+    }),
+)

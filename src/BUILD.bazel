@@ -95,6 +95,7 @@ micronaut_library(
 micronaut_library(
     name = "ExternalResources",
     srcs = ["server/ExternalResources.kt"],
+    deps = ["//src/core:AppConfig"],
 )
 
 micronaut_library(
