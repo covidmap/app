@@ -7,7 +7,6 @@ ARGS ?=
 CI ?= no
 APP ?= //:app
 TARGETS ?= $(APP)
-BAZELISK ?= $(shell which bazelisk)
 VERBOSE ?= no
 QUIET ?= yes
 CACHE ?= no
@@ -22,9 +21,16 @@ IMAGE_PROJECT ?= covid-impact-map
 
 # Flag: `CI`
 ifeq ($(CI),yes)
-ARGS += --config=ci
+TAG += --config=ci
+_DEFAULT_JAVA_HOME = $(shell echo $$JAVA_HOME_12_X64)
+BASE_ARGS += --define=ZULUBASE=$(_DEFAULT_JAVA_HOME) --define=jdk=zulu
+BAZELISK ?= /bin/bazelisk
+GENHTML ?= /bin/genhtml
 else
-ARGS += --config=dev
+TAG += --config=dev
+IBAZEL ?= $(shell which ibazel)
+BAZELISK ?= $(shell which bazelisk)
+GENHTML ?= $(shell which genhtml)
 endif
 
 # Flag: `STRICT`.

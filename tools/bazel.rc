@@ -40,6 +40,7 @@ run --workspace_status_command=./tools/bazel_stamp_vars.sh
 
 build:dev --define=covidmap_release_tag=latest
 build:ci --spawn_strategy=local
+build:ci --compilation_mode=dbg
 
 build:release --compilation_mode=opt
 build:release --copt=-Wframe-larger-than=16384
