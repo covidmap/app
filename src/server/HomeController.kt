@@ -4,7 +4,7 @@ package server
 import gust.backend.AppController
 import gust.backend.PageContextManager
 import gust.backend.PageRender
-import io.micronaut.http.HttpResponse
+import io.micronaut.http.MutableHttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.QueryValue
@@ -33,7 +33,7 @@ class HomeController @Inject constructor(ctx: PageContextManager): AppController
    */
   @View("covidmap.home.page")
   @Get("/", produces = ["text/html;charset=UTF-8"])
-  fun home(@QueryValue("name", defaultValue = defaultName) name: String): HttpResponse<PageRender> {
+  fun home(@QueryValue("name", defaultValue = defaultName) name: String): MutableHttpResponse<PageRender> {
     if (name != defaultName)
       logging.info("Greeting user with name '$name'...")
     if (logging.isDebugEnabled)
