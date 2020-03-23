@@ -63,6 +63,15 @@ run:  ## Run the app locally.
 build:  ## Build the app.
 	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) build $(BASE_ARGS) $(ARGS) -- $(TARGETS)
 
+image:  ## Build a container image for the app, locally.
+	@echo "Image build not yet supported."
+
+push:  ## Build and publish a container image for the app, tagged with the current source tree hash.
+	@echo "Image push not yet supported."
+
+deploy:  ## Deploy the app to production.
+	@echo "Production deploy not yet supported."
+
 test:  ## Run any testsuites.
 	@echo "No tests yet."
 
