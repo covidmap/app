@@ -20,25 +20,30 @@
           <header class="{css('mdl-layout__header')} {css('mdl-layout__header--transparent')}">
             <div class="{css('mdl-layout__header-row')}">
               <span class="{css('mdl-layout-title')}">{$title}</span>
-              <div class="{css('mdl-layout-spacer')}"></div>
               <nav class="{css('mdl-navigation')}">
-                <a class="{css('mdl-navigation__link')}" href="#{xid('link')}">Link</a>
-                <a class="{css('mdl-navigation__link')}" href="#{xid('link')}">Link</a>
-                <a class="{css('mdl-navigation__link')}" href="#{xid('link')}">Link</a>
-                <a class="{css('mdl-navigation__link')}" href="#{xid('link')}">Link</a>
+                <a class="{css('mdl-navigation__link')} {css('active')}"
+                   href="/">{msg desc="Map nav."}Map{/msg}</a>
+                <a class="{css('mdl-navigation__link')}"
+                   href="/data">{msg desc="Raw Data nav."}Raw Data{/msg}</a>
+                <a class="{css('mdl-navigation__link')}"
+                   target="_blank"
+                   href="https://github.com/covidmap/app">{msg desc="Project nav."}Project{/msg}</a>
               </nav>
             </div>
           </header>
           <div class="{css('mdl-layout__drawer')}">
             <span class="{css('mdl-layout-title')}">{$title}</span>
             <nav class="{css('mdl-navigation')}">
-              <a class="{css('mdl-navigation__link')}" href="#{xid('link')}">Link</a>
-              <a class="{css('mdl-navigation__link')}" href="#{xid('link')}">Link</a>
-              <a class="{css('mdl-navigation__link')}" href="#{xid('link')}">Link</a>
-              <a class="{css('mdl-navigation__link')}" href="#{xid('link')}">Link</a>
+              <a class="{css('mdl-navigation__link')} {css('active')}"
+                 href="/">{msg desc="Map nav."}Map{/msg}</a>
+              <a class="{css('mdl-navigation__link')}"
+                 href="/data">{msg desc="Raw Data nav."}Raw Data{/msg}</a>
+              <a class="{css('mdl-navigation__link')}"
+                 target="_blank"
+                 href="https://github.com/covidmap/app">{msg desc="Project nav."}Project{/msg}</a>
             </nav>
           </div>
-          <main class="{css('mdl-layout__content')}">
+          <main id="{xid('appContainer')}" class="{css('mdl-layout__content')}">
               {$page}
           </main>
         </div>
@@ -51,12 +56,11 @@
  * Render the homepage for COVID Impact Map.
  */
 {template .page}
-    {@param? name: string}  /** Name to say hello to for our simple salutation. Defaults to 'World'. */
-
     {call .layout}
         {param page kind="html"}
-            <b>Hello, <span id="name">{$name ?: 'World'}</span>!</b>
-            <b id="result">Running ping...</b>
+            <div class="{css('loading-box')}">
+                <b>One moment please...</b>
+            </div>
         {/param}
     {/call}
 {/template}

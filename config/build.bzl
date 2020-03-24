@@ -13,20 +13,22 @@ load(
 )
 
 DEPS = {
+    # COVID Map: UI
     "covidmap_ui": {
         "type": "github",
         "repo": "covidmap/ui",
-        "target": "a8627a9d2293569273efc08316464c1aa2e9e6cc",
+        "local": "/workspace/covidmap/ui",
+        "target": "d4c26761b2634f923e5ae0f53acaf0c2f02bf85f",
         "overlay": "covidmap_ui.bzl",
-        "seal": "018f36145940761fe987c3360f090010e8a9fa2c0884a91c6d3d040f3487f752"},
+        "seal": "a84471c25a6e5a261214b2f8af90e651c41dba280bea66dcd793ee75ee41b92c"},
 }
 
 
 
-def _install_dependencies():
+def _install_dependencies(local):
 
     """ Install all dependencies into the current WORKSPACE. """
 
-    dependencies(DEPS)
+    dependencies(DEPS, local)
 
 install_dependencies = _install_dependencies

@@ -12,6 +12,7 @@
 build --embed_label=alpha
 build --define project=covid-impact-map
 build --define cluster=gke_bloom-sandbox_us-west2-c_k9-v4c
+build --strategy=sandboxed
 
 common --experimental_allow_incremental_repository_updates
 
@@ -20,6 +21,7 @@ run --incompatible_restrict_string_escapes=false
 build --incompatible_depset_union=false
 build --incompatible_restrict_string_escapes=false
 
+build:dev --worker_sandboxing
 build:dev --define=project=covid-impact-map
 build:dev --google_default_credentials=true
 
@@ -43,12 +45,15 @@ build:ci --spawn_strategy=local
 
 build:release --compilation_mode=opt
 build:release --copt=-Wframe-larger-than=16384
+build:release --strategy=TypeScriptCompile=standalone
 
 build:dev --compilation_mode=dbg
 build:dev --spawn_strategy=local
+build:dev --strategy=Javac=worker
 build:dev --strategy=J2cl=worker
 build:dev --strategy=Closure=worker
-build:dev --strategy=TypeScriptCompile=worker
+#build:dev --strategy=TypeScriptCompile=worker
+build:dev --strategy=TypeScriptCompile=standalone
 build:dev --experimental_persistent_javac
 build:dev --define=jdk=zulu
 build:dev --define=ZULUBASE=/Library/Java/JavaVirtualMachines/zulu-12.jdk/Contents/Home

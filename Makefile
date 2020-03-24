@@ -3,7 +3,7 @@
 # COVIDMAP: Makefile
 #
 
-VERSION ?= v1b
+VERSION ?= v1d
 
 ARGS ?= --define=covidmap_version=$(VERSION)
 CI ?= no
@@ -86,6 +86,9 @@ run:  ## Run the app locally.
 
 build:  ## Build the app.
 	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) build $(BASE_ARGS) $(ARGS) -- $(TARGETS)
+
+dev:  ## Build the app, start it up, and auto-reload with changes.
+	$(_RULE)$(IBAZEL) run $(ARGS) $(APP)
 
 image:  ## Build a container image for the app, locally.
 	@echo "Image build not yet supported."

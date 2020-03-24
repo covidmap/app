@@ -1,5 +1,7 @@
 
 $app-name: 'COVID Impact Map';
-$app-color-primary: #fefefe;
-$app-color-text: #333;
+$app-color-primary: #333;
+$app-color-text: #fefefe;
+$app-gradient-begin: unquote("rgba(240,160,161,1)");
+$app-gradient-end: unquote("rgba(243,209,197,1)");
 $app-font-family-primary: unquote("-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif,Apple Color Emoji");

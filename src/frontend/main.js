@@ -3,16 +3,32 @@
 
 goog.module('covidmap.main');
 
+const AppConfig = goog.require('core.AppConfig');
 const logging = goog.require('gust.logging');
 const {AppAPI} = goog.require('covidmap.api');
 
 
+
 goog.scope(function() {
+  // noinspection UseOfBracketNotationInspection
+  const firebaseConfig = window['__firebase_config'] = {
+    'apiKey': AppConfig.getApiKey(),
+    'authDomain': AppConfig.getAuthDomain(),
+    'databaseURL': AppConfig.getDatabaseUrl(),
+    'projectId': AppConfig.getProjectId(),
+    'storageBucket': AppConfig.getStorageBucket(),
+    'messagingSenderId': AppConfig.getMessagingSenderId(),
+    'appId': AppConfig.getAppId(),
+    'measurementId': AppConfig.getMeasurementId()
+  };
+
   /**
    * Bootstrap function, starts the COVID Map app.
    */
   function main() {
-    // affix test function
+    console.log('Firebase details: ', firebaseConfig);
+
+    // noinspection UseOfBracketNotationInspection
     window['test'] = function() {
       logging.info('Starting test...');
       const api = AppAPI.acquire();

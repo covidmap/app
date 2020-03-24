@@ -4,6 +4,8 @@ package(
 )
 
 
+## Top-level aliases
+
 alias(
     name = "covidmap",
     actual = "//src:CovidMapServer",
@@ -22,5 +24,13 @@ alias(
 alias(
     name = "app",
     actual = "covidmap",
+)
+
+
+## File exports
+
+alias(
+    name = "tsconfig.json",
+    actual = "//src/config:tsconfig.json",
 )
 

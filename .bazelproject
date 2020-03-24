@@ -3,6 +3,7 @@ directories:
   config
   tools
   external
+  ui
   -vendor/
 
 build_flags:
