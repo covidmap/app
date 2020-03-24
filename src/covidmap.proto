@@ -22,9 +22,7 @@ option java_package = "covidmap.schema";
 option csharp_namespace = "CovidMap.Schema";
 option go_package = "github.com/covidmap/app;covidmap";
 
-import "google/type/month.proto";
 import "google/type/latlng.proto";
-import "google/type/timeofday.proto";
 
 import "google/api/client.proto";
 import "google/api/annotations.proto";
@@ -33,11 +31,7 @@ import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/field_mask.proto";
 
-import "webutil/html/types/html.proto";
-
-import "gust/page/media.proto";
 import "gust/core/datamodel.proto";
 
 
