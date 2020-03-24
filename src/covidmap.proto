@@ -31,6 +31,7 @@ import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/field_mask.proto";
 
@@ -247,17 +248,151 @@ message Report {
   message ReportKey {
     // Specifies an auto-generated ID for a given report.
     string id = 1 [(core.field).type = ID];
+
+    // Specifies the parent facility record this report is regarding/related-to. Required.
+    Facility.FacilityKey facility = 2 [(core.field).type = PARENT];
+  }
+
+  // Describes the source of a given report submission.
+  message ReportSourcing {
+    // Type of source for this report, as indicated by the reporter (honor system here).
+    oneof source {
+      // This report is detailing a witnessed, first-hand account.
+      bool first_hand = 1;
+
+      // This report is detailing a report received from another first-hand source.
+      bool second_hand = 2;
+
+      // This report is detailing something someone saw on social media. In this case, a link or description of the post
+      // witnessed is required.
+      bool social_media = 3;
+
+      // This report is being submitted by a qualified healthcare professional.
+      bool healthcare = 4;
+    }
+
+    // URI reference for this report.
+    string uri = 5;
+
+    // Narrative description of this report's source, if required/applicable.
+    string description = 6;
+  }
+
+  // Specifies basic questions enclosed in the report.
+  message ReportQuestions {
+    // Specifies a critical resource for a given healthcare facility.
+    enum FacilityResource {
+      // The resource is not amongst the known/enumerated set and will be named in an arbitrary string label.
+      OTHER_RESOURCE = 0;
+
+      // Personal Protective Equipment (general category).
+      PPE = 1;
+
+      // N95-style protective masks.
+      MASKS_N95 = 2;
+
+      // Surgical-quality protective masks.
+      MASKS_SURGICAL = 3;
+
+      // Protective gloves.
+      GLOVES = 4;
+
+      // Protective gowns.
+      GOWNS = 5;
+
+      // Protective eyewear.
+      EYEWEAR = 6;
+
+      // Disposable boot-covers.
+      BOOTIES = 7;
+
+      // Protective face shields.
+      FACE_SHIELDS = 8;
+
+      // Cleaning supplies (general category).
+      CLEANING_SUPPLIES = 21;
+
+      // Hand sanitizer.
+      SANITIZER = 22;
+
+      // Sanitizing wipes.
+      SANITIZING_WIPES = 23;
+
+      // Equipment and provisions for actually conducting medical operations.
+      MEDICAL_EQUIPMENT = 31;
+
+      // Thermometers.
+      THERMOMETERS = 32;
+
+      // Breathing assistance apparatus/machines.
+      VENTILATORS = 33;
+    }
+
+    // Details about a given facility's pressure on a given resource, enumerated in `FacilityResource`.
+    message ResourcePressure {
+      // Specifies the resource which is experiencing pressure.
+      oneof resource {
+        // Specifies a known resource, from the enumerated set at `FacilityResource`.
+        FacilityResource known_resource = 1;
+
+        // Specifies a label describing an "OTHER" selection for `FacilityResource`.
+        string other_resource = 2;
+      }
+
+      // This facility is facing a shortage of these supplies.
+      bool shortage = 3;
+
+      // This facility is facing an increase in pressure on these supplies.
+      bool pressure = 4;
+
+      // Specifies a best-effort estimate for how long a given resource supply will last. Only available to be specified
+      // in reports directly from healthcare professionals.
+      google.protobuf.Duration supplies_for = 5;
+    }
+
+    // Specifies an estimate for the wait time experienced at the facility, as applicable.
+    google.protobuf.Duration wait_time = 1;
+
+    // This facility is facing a shortage.
+    bool shortage = 2;
+
+    // This facility is facing an increase in pressure.
+    bool pressure = 3;
+
+    // Only one of the following generic up/down change values is allowed at a time, and only if the user has submitted
+    // a report before for this facility.
+    oneof delta_estimate {
+      // The situation is better than before.
+      bool better = 4;
+
+      // The situation is worse than before.
+      bool worse = 5;
+    }
+
+    // Pressures applied to critical facility resources.
+    repeated ResourcePressure resource = 6;
   }
 
   // Specifies the key associated with a given report, that uniquely distinguishes it.
   ReportKey key = 1 [(core.field).type = KEY];
 
-  // Specifies a salted hash of the submitter's email address, so that their reports may be grouped/deduped.
+  // Specifies a salted hash of the submitter's email address, so that their reports may be grouped/de-duped.
   string submitter = 2;
 
-  //
-  // REPORTING SCHEMA COMING SOON
-  //
+  // Source information for this report submission.
+  ReportSourcing source = 3;
+
+  // Reports answers to the survey questions submitted by the user as part of this report.
+  ReportQuestions survey = 4;
+
+  // Notes to apply to the report, in free-form, with limited support for Markdown-based formatting.
+  string notes = 5;
+
+  // Timestamp indicating when this record was last modified.
+  google.protobuf.Timestamp modified = 6 [(core.field).stamp_update = true];
+
+  // Timestamp indicating when this record was originally created.
+  google.protobuf.Timestamp created = 7 [(core.field).stamp_create = true];
 }
 
 
@@ -269,6 +404,12 @@ message GenericQuery {
 
   // Specifies the record offset for the query, if applicable.
   uint32 offset = 2;
+
+  // Latitude/longitude for a nearby-location query.
+  google.type.LatLng nearby = 3;
+
+  // Maximum zoom level to apply to the query, if a `nearby` value is specified.
+  uint32 max_zoom = 4;
 }
 
 
@@ -295,8 +436,4 @@ service App {
   rpc Facilities(GenericQuery) returns (FacilityList) {
     option (google.api.http).get = "/v1/facilities";
   }
-
-  //
-  // MAP DATA METHODS COMING SOON
-  //
 }
