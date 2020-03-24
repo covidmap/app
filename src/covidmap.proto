@@ -467,6 +467,9 @@ message StatsQuery {
 
   // Flipped to `true` to withhold facility payload data.
   bool delta = 2;
+
+  // Address to search around for health facilities. If specified, `query.nearby` cannot also be specified.
+  string address = 3;
 }
 
 
@@ -497,6 +500,6 @@ service App {
   // Describes a query to produce a set of facilities, with their associated stats. Query parameters are applied as
   // specified, stats are read (they are pre-calculated), and shuttled back to the client.
   rpc Stats(StatsQuery) returns (FacilityStatsList) {
-    option (google.api.http).get = "/v1/stats";
+    option (google.api.http).post = "/v1/stats";
   }
 }
