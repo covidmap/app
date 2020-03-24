@@ -32,6 +32,7 @@ deploy                         Deploy the app to production.
 dev                            Build the app, start it up, and auto-reload with changes.
 distclean                      Clean ephemeral targets and dependencies.
 forceclean                     DANGEROUS: Wipe all local changes and force-reset codebase.
+gateway                        Build and push the gateway (Envoy) container image.
 help                           Show this help text.
 image                          Build a container image for the app, locally.
 push                           Build and publish a container image for the app, tagged with the current source tree hash.

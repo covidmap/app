@@ -5,15 +5,17 @@
 
 VERSION ?= v1d
 
-ARGS ?= --define=covidmap_version=$(VERSION)
+ARGS ?=
 CI ?= no
 APP ?= //:app
+ACTION ?= replace
+IMAGE_TARGET ?= //src:CovidMapServer-image
 TARGETS ?= $(APP)
 VERBOSE ?= no
 QUIET ?= yes
 CACHE ?= no
 STRICT ?= no
-BASE_ARGS ?=
+BASE_ARGS ?= --define=covidmap_release_tag=$(VERSION)
 BAZELISK_ARGS ?=
 CACHE_KEY ?= CovidMap
 RELEASE ?= no
@@ -90,14 +92,18 @@ build:  ## Build the app.
 dev:  ## Build the app, start it up, and auto-reload with changes.
 	$(_RULE)$(IBAZEL) run $(ARGS) $(APP)
 
+gateway:  ## Build and push the gateway (Envoy) container image.
+	$(_RULE)docker build -t us.gcr.io/covid-impact-map/gateway:$(VERSION) src/config/gateway && \
+		docker push us.gcr.io/covid-impact-map/gateway:$(VERSION)
+
 image:  ## Build a container image for the app, locally.
-	@echo "Image build not yet supported."
+	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) run $(BASE_ARGS) $(ARGS) -- $(IMAGE_TARGET)
 
 push:  ## Build and publish a container image for the app, tagged with the current source tree hash.
-	@echo "Image push not yet supported."
+	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) run $(BASE_ARGS) $(ARGS) -- $(IMAGE_TARGET)-push
 
 deploy:  ## Deploy the app to production.
-	@echo "Production deploy not yet supported."
+	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) run $(BASE_ARGS) $(ARGS) -- //src/config:app.$(ACTION)
 
 test:  ## Run any testsuites.
 	@echo "No tests yet."

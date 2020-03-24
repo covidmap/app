@@ -69,7 +69,7 @@ _k9(
     name = "covidmap",
     template = ":99-covidmap.k8s.yaml",
     images = {
-      "us.gcr.io/covid-impact-map/jvm": "//src:COVIDMapServer-image",
+      "us.gcr.io/covid-impact-map/jvm": "//src:CovidMapServer-image",
     },
 )
 
@@ -96,6 +96,15 @@ k8s_config(
         ":envoy",
         ":services",
         ":redis",
+        ":covidmap",
+    ]
+)
+
+k8s_config(
+    name = "app",
+    deps = [
+        ":envoy",
+        ":services",
         ":covidmap",
     ]
 )
