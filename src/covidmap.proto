@@ -396,6 +396,46 @@ message Report {
 }
 
 
+// Describes an individual facility, and stats to go along with them. Facility payload data may be withheld at the
+// caller's option. For instance, after initially loading facilities, the caller may choose to only load stats to update
+// or refresh a user interface.
+message FacilityStats {
+  // Describes the pin color to show for the hospital.
+  enum PinColor {
+    // The pin should show as gray - meaning, we have not received any data for this location.
+    NEUTRAL = 0;
+
+    // The location has received predominantly positive reports.
+    GREEN = 1;
+
+    // The location has received mixed reports.
+    YELLOW = 2;
+
+    // The location has received predominantly negative reports.
+    RED = 3;
+  }
+
+  // Payload data for the facility in question. This may include only a key, if the user has elected to elide payload
+  // data because they already have it.
+  Facility facility = 1;
+
+  // Color to show for the facility's pin.
+  PinColor pin_color = 2;
+
+  // Total count of reports for this facility, across all sources.
+  uint32 report_count = 3;
+
+  // Absolute count of "positive" reports for this facility.
+  uint32 positive_reports = 4;
+
+  // Absolute count of "negative" reports for this facility.
+  uint32 negative_reports = 5;
+
+  // Timestamp for the most recent report from this facility.
+  google.protobuf.Timestamp most_recent = 6;
+}
+
+
 // Specifies a generic query for a set of records. These properties filter, offset, and otherwise mutate queries for
 // whatever object the user is fetching.
 message GenericQuery {
@@ -420,6 +460,23 @@ message FacilityList {
 }
 
 
+// Describes the notion of a query for stats on a set of healthcare facilities, as currently known by the app.
+message StatsQuery {
+  // Generic query parameters.
+  GenericQuery query = 1;
+
+  // Flipped to `true` to withhold facility payload data.
+  bool delta = 2;
+}
+
+
+// Encapsulates a response that includes stats pre-calculated for each facility matching the input query.
+message FacilityStatsList {
+  // Describes stat results (and potentially facility payload data) for a matching set of facilities.
+  repeated FacilityStats stanza = 1;
+}
+
+
 // Defines the main API that powers the COVID Impact Map application.
 service App {
   option (google.api.default_host) = "rpc.covidmap.link";
@@ -435,5 +492,11 @@ service App {
   // dataset is a generic list of all known healthcare facilities that can be verified by COVID Impact Map devs.
   rpc Facilities(GenericQuery) returns (FacilityList) {
     option (google.api.http).get = "/v1/facilities";
+  }
+
+  // Describes a query to produce a set of facilities, with their associated stats. Query parameters are applied as
+  // specified, stats are read (they are pre-calculated), and shuttled back to the client.
+  rpc Stats(StatsQuery) returns (FacilityStatsList) {
+    option (google.api.http).get = "/v1/stats";
   }
 }
