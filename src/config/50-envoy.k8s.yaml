@@ -86,7 +86,7 @@ spec:
       containers:
         ## Container: Gateway Proxy (Envoy)
         - name: envoy
-          image: us.gcr.io/covid-impact-map/gateway:v7c
+          image: us.gcr.io/covid-impact-map/gateway:v1d
           ports:
             - name: tls-gateway
               containerPort: 8443
