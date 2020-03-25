@@ -474,6 +474,16 @@ message FacilityStatsList {
 }
 
 
+// Specifies a report that is being submitted from the app frontend.
+message ReportSubmission {
+  // Specifies the report being submitted.
+  Report report = 1;
+
+  // Email address of the person submitting the report.
+  string email = 2;
+}
+
+
 // Defines the main API that powers the COVID Impact Map application.
 service App {
   option (google.api.default_host) = "rpc.covidmap.link";
@@ -495,5 +505,11 @@ service App {
   // specified, stats are read (they are pre-calculated), and shuttled back to the client.
   rpc Stats(StatsQuery) returns (FacilityStatsList) {
     option (google.api.http).post = "/v1/stats";
+  }
+
+  // Supplies an endpoint to submit a report to the application. Reports are accepted by the app at this endpoint from
+  // any source (within reason, and quotas apply).
+  rpc Report(ReportSubmission) returns (google.protobuf.Empty) {
+    option (google.api.http).post = "/v1/report";
   }
 }
