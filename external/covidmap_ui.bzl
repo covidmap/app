@@ -15,11 +15,6 @@ load(
 )
 
 load(
-    "@npm_bazel_labs//:index.bzl",
-    "ts_proto_library",
-)
-
-load(
     "@npm_bazel_rollup//:index.bzl",
     "rollup_bundle",
 )
@@ -50,6 +45,11 @@ style_library(
 )
 
 style_library(
+    name = "hospital-map",
+    srcs = ["css/hospitalMap.css"],
+)
+
+style_library(
     name = "hospital-raw-output",
     srcs = ["css/hospitalRawOutput.css"],
 )
@@ -71,6 +71,7 @@ style_binary(
     deps = [
         ":menu-bar",
         ":loading-cover",
+        ":hospital-map",
         ":hospital-raw-output",
         ":global",
         ":app-main",
@@ -88,6 +89,8 @@ _SOURCE_PATHS = [
     "src/store/*",
     "src/store/models/*",
     "src/store/dataQuery/*",
+    "src/logger/*",
+    "src/logger/models/*",
     "src/view/views/*",
     "src/view/views/**/*",
     "src/view/models/*",

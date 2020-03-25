@@ -22,7 +22,6 @@
     "@babel/preset-typescript": "^7.9.0",
     "@bazel/bazel": "latest",
     "@bazel/karma": "^1.4.1",
-    "@bazel/labs": "^1.4.1",
     "@bazel/rollup": "^1.4.1",
     "@bazel/terser": "^1.4.1",
     "@bazel/typescript": "latest",

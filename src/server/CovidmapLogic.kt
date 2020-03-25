@@ -1,7 +1,14 @@
 
 package server
 
+import com.maxmind.db.Reader.FileMode
+import com.maxmind.geoip2.DatabaseProvider
+import com.maxmind.geoip2.DatabaseReader
+import gust.backend.runtime.Logging
+import org.slf4j.Logger
 import javax.inject.Singleton
+import java.io.BufferedInputStream
+import java.io.IOException
 
 
 /**
@@ -15,4 +22,32 @@ import javax.inject.Singleton
  */
 @Singleton
 class CovidmapLogic {
+  /** Manages the MaxMind GeoIP database. */
+  object MaxMindManager {
+    /** Where we can find the MaxMind database. */
+    private const val dbname = "/maxmind.mmdb"
+
+    /** Mode to open the MaxMind DB file in. */
+    private val mode = FileMode.MEMORY
+
+    /** Private logging pipe. */
+    private val logging: Logger = Logging.logger(CovidmapLogic::class.java)
+
+    @Throws(IOException::class)
+    fun loadDatabase(): DatabaseProvider {
+      BufferedInputStream(CovidmapLogic::class.java.getResourceAsStream(dbname)).use { buffer ->
+        logging.info("Loading MaxMind database (mode: ${mode.name})...")
+        return DatabaseReader.Builder(buffer)
+          .locales(listOf("en-US"))
+          .fileMode(mode)
+          .build()
+      }
+    }
+  }
+
+  /** Loaded MaxMind database object. */
+  private val maxmindDb: DatabaseProvider = MaxMindManager.loadDatabase()
+
+  /** Retrieve the MaxMind database provider. */
+  fun maxmind(): DatabaseProvider = maxmindDb
 }

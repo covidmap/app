@@ -22,26 +22,6 @@ load(
     "micronaut_interceptor",
 )
 
-load(
-    "@npm_bazel_labs//:index.bzl",
-    "ts_proto_library",
-)
-
-load(
-    "@npm_bazel_rollup//:index.bzl",
-    "rollup_bundle",
-)
-
-load(
-    "@npm_bazel_terser//:index.bzl",
-    "terser_minified",
-)
-
-load(
-    "@npm_bazel_typescript//:index.bzl",
-    "ts_config",
-)
-
 
 exports_files([
     "api.yml",
@@ -103,6 +83,10 @@ micronaut_library(
     name = "CovidmapLogic",
     srcs = ["server/CovidmapLogic.kt"],
     proto_deps = [":covidmap_proto"],
+    deps = [
+        "@jdeps//:com_maxmind_db_maxmind_db",
+        "@jdeps//:com_maxmind_geoip2_geoip2",
+    ]
 )
 
 micronaut_service(
@@ -134,7 +118,7 @@ micronaut_application(
     logging_config = ":logback.xml",
     ports = ["8081", "8082"],
 
-    # -- Controllers -- #
+    # -- App Dependencies -- #
     controllers = [
         ":HomeController",
     ],
@@ -154,6 +138,10 @@ micronaut_application(
         "covidmap.skin": "@covidmap_ui//:ui",
         "covidmap.styles": "//src/frontend:styles",
     },
+
+    classpath_resources = [
+        "@maxmind//:maxmind.mmdb",
+    ],
 
     # -- Publishing / Images -- #
     native = False,

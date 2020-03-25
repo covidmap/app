@@ -10,8 +10,8 @@ load(
 
 
 LOCAL = False
-GUST_VERSION = "ffab33c883908421f7a05a37228b53e62feab4e0"
-GUST_FINGERPRINT = "9834674b668544318f59e31fb9acfeb2f16a02fbcc48d17f4fc3e3147aea9cd0"
+GUST_VERSION = "95e9624a59af1f262346f9d345dad0ead1d125e6"
+GUST_FINGERPRINT = "b79d695156ecbb2cde25717795e1611e18bfdf8b78ec4a255b5ffbcd70a4123e"
 
 (local_repository(
     name = "gust",
@@ -121,11 +121,14 @@ graal_bindist_repository(
 )
 
 ## Java Repos/Deps
-load("@gust//defs/toolchain/java:repos.bzl", "gust_java_repositories")
-gust_java_repositories()
+load("//config:jdeps.bzl", java_setup = "java_repositories")
+java_setup()
 
 load("@maven//:defs.bzl", "pinned_maven_install")
 pinned_maven_install()
+
+load("@jdeps//:defs.bzl", app_maven_install = "pinned_maven_install")
+app_maven_install()
 
 ## Web Testing
 load("@io_bazel_rules_webtesting//web:repositories.bzl", "web_test_repositories")

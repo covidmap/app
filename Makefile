@@ -108,6 +108,10 @@ deploy:  ## Deploy the app to production.
 test:  ## Run any testsuites.
 	@echo "No tests yet."
 
+update:  ## Update Java and Git submodule dependencies via Bazel pins.
+	$(_RULE)git submodule update --remote ui
+	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) run $(BASE_ARGS) $(ARGS) -- @unpinned_jdeps//:pin
+
 report-coverage:
 	@echo "No coverage reporting yet."
 
@@ -133,5 +137,5 @@ forceclean: distclean  ## DANGEROUS: Wipe all local changes and force-reset code
 	@git clean -xdf
 
 
-.PHONY: all build run help clean distclean forceclean test report-coverage report-tests
+.PHONY: all build run help clean distclean forceclean test report-coverage report-tests update
 

@@ -8,7 +8,10 @@ import jsinterop.annotations.JsType;
 @JsType
 public final class AppConfig {
   /** API endpoint to use. */
-  private static final String apiEndpoint = "rpc.covidmap.link";
+  private static final String apiEndpoint = "https://beta.covidmap.link/v1/";
+
+  /** App container ID to expose. */
+  private static final String appContainerId = "appContainer";
 
   /** Static config values for Firebase. */
   @JsType
@@ -66,5 +69,10 @@ public final class AppConfig {
   /** @return API endpoint to make use of. */
   @JsMethod public static String getApiEndpoint() {
     return apiEndpoint;
+  }
+
+  /** @return Application container ID. */
+  @JsMethod public static String getAppContainerId() {
+    return appContainerId;
   }
 }

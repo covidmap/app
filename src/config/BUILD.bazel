@@ -104,7 +104,6 @@ k8s_config(
     name = "app",
     deps = [
         ":envoy",
-        ":services",
         ":covidmap",
     ]
 )
