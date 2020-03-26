@@ -35,13 +35,13 @@ load(
 #
 
 style_library(
-    name = "menu-bar",
-    srcs = ["css/menuBar.css"],
+    name = "app-main",
+    srcs = ["css/appMain.css"],
 )
 
 style_library(
-    name = "loading-cover",
-    srcs = ["css/loadingCover.css"],
+    name = "global",
+    srcs = ["css/global.css"],
 )
 
 style_library(
@@ -55,13 +55,18 @@ style_library(
 )
 
 style_library(
-    name = "global",
-    srcs = ["css/global.css"],
+    name = "loading-cover",
+    srcs = ["css/loadingCover.css"],
 )
 
 style_library(
-    name = "app-main",
-    srcs = ["css/appMain.css"],
+    name = "menu-bar",
+    srcs = ["css/menuBar.css"],
+)
+
+style_library(
+    name = "single-hospital",
+    srcs = ["css/singleHospitalDetails.css"],
 )
 
 
@@ -69,12 +74,13 @@ style_binary(
     name = "ui",
     optimize = True,
     deps = [
-        ":menu-bar",
-        ":loading-cover",
+        ":app-main",
+        ":global",
         ":hospital-map",
         ":hospital-raw-output",
-        ":global",
-        ":app-main",
+        ":loading-cover",
+        ":menu-bar",
+        ":single-hospital",
     ],
 )
 
