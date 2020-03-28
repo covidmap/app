@@ -5,5 +5,5 @@
 
 [submodule "ui"]
 	path = ui
-	branch = fix/dispatcher
+	branch = master
 	url = git@github.com:covidmap/ui.git
