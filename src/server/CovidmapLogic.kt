@@ -1,6 +1,9 @@
+@file:Suppress("UnstableApiUsage")
 
 package server
 
+import com.google.common.util.concurrent.ListeningScheduledExecutorService
+import com.google.common.util.concurrent.MoreExecutors
 import com.maxmind.db.Reader.FileMode
 import com.maxmind.geoip2.DatabaseProvider
 import com.maxmind.geoip2.DatabaseReader
@@ -10,6 +13,7 @@ import org.slf4j.Logger
 import javax.inject.Singleton
 import java.io.BufferedInputStream
 import java.io.IOException
+import java.util.concurrent.Executors
 
 
 /**
@@ -24,7 +28,8 @@ import java.io.IOException
 @Singleton
 class CovidmapLogic {
   /** Executor for async tasks. */
-  private val executor: String? = null
+  private val executor: ListeningScheduledExecutorService = MoreExecutors.listeningDecorator(
+      Executors.newScheduledThreadPool(3));
 
   /** Manages the MaxMind GeoIP database. */
   object MaxMindManager {
@@ -37,8 +42,9 @@ class CovidmapLogic {
     /** Private logging pipe. */
     private val logging: Logger = Logging.logger(CovidmapLogic::class.java)
 
+    /** Load the MaxMind GeoIP database during server startup. */
     @Throws(IOException::class)
-    fun loadDatabase(): DatabaseProvider {
+    fun loadMaxmind(): DatabaseProvider {
       BufferedInputStream(CovidmapLogic::class.java.getResourceAsStream(dbname)).use { buffer ->
         logging.info("Loading MaxMind database (mode: ${mode.name})...")
         return DatabaseReader.Builder(buffer)
@@ -47,10 +53,16 @@ class CovidmapLogic {
           .build()
       }
     }
+
+    /** Supply an instance of the [FacilitiesManager], which loads static health facilitiy data. */
+    @Throws(IOException::class)
+    fun loadFacilities(): FacilitiesManager? {
+      return null
+    }
   }
 
   /** Loaded MaxMind database object. */
-  private val maxmindDb: DatabaseProvider = MaxMindManager.loadDatabase()
+  private val maxmindDb: DatabaseProvider = MaxMindManager.loadMaxmind()
 
   /** Retrieve the MaxMind database provider. */
   fun maxmind(): DatabaseProvider = maxmindDb

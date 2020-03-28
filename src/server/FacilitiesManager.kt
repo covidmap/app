@@ -1,0 +1,6 @@
+package server
+
+
+/** */
+class FacilitiesManager {
+}
