@@ -2,14 +2,15 @@
 package server
 
 import com.google.protobuf.Empty
+import covidmap.schema.*
 import io.grpc.stub.StreamObserver
 import io.micronaut.grpc.annotation.GrpcService
-import covidmap.schema.AppGrpc
 import javax.inject.Singleton
 
 
 /**
- *
+ * Server-side implementation of the gRPC-based COVID Impact Map API. This API supplies functionality w.r.t. report
+ * submission, facility listings, and facility stats which may be overlaid on map UIs.
  */
 @Singleton
 @GrpcService
@@ -31,5 +32,50 @@ class AppService: AppGrpc.AppImplBase() {
   override fun health(request: Empty, observer: StreamObserver<Empty>) {
     observer.onNext(Empty.getDefaultInstance())
     observer.onCompleted()
+  }
+
+  /**
+   * Retrieve a list of healthcare facilities tracked by this system, potentially filtered by any query parameters
+   * present in [request]. As facilities are found to match the supplied query, they are gathered, and then sent back to
+   * the client.
+   *
+   * If the client opts-in to payload data, it will be enclosed for each facility. If the client opts-out of payload
+   * data, only a key is provided for each facility.
+   *
+   * @param request Request to query the facility list, potentially with filter parameters.
+   * @param observer Observer for a materialized facility list response.
+   */
+  override fun facilities(request: GenericQuery, observer: StreamObserver<FacilityList>) {
+    TODO("not yet implemented")
+  }
+
+  /**
+   * Produce a set of stats, for each facility that is relevant within a given area. If no relevant area is passed into
+   * the query to use as a geo-boundary, one is calculated by geo-locating the client's remote IP address.
+   *
+   * Once a relevance boundary is established, facilities are queried within that boundary, and a set of
+   * (pre-calculated) stats are read back to the client for each facility within that region that additionally matches
+   * or otherwise satisfies the other query parameters provided in the request.
+   *
+   * @param request Request for a stats list, potentially with query or filter parameters.
+   * @param observer Observer for a materialized facility stats response.
+   */
+  override fun stats(request: StatsQuery, observer: StreamObserver<FacilityStatsList>) {
+    TODO("not yet implemented")
+  }
+
+  /**
+   * Accepts submission of reports for the COVID Impact Map project. Each report should specify the email address for
+   * the user submitting the report, along with answers to survey questions they have provided in the form interface.
+   *
+   * If the submission doesn't validate, a `4xx`-series HTTP response is returned. If the submission validates fine, the
+   * report is encoded as needed and stored in underlying (1) object storage, placed underneath the facility it is
+   * reporting information for, and (2) analytics storage, as a row representing an individual report.
+   *
+   * @param request Request to submit a report for the COVID Impact Map application.
+   * @param observer Observer for a response indicating an accepted report.
+   */
+  override fun report(request: ReportSubmission, observer: StreamObserver<Empty>) {
+    TODO("not yet implemented")
   }
 }

@@ -19,9 +19,9 @@ DEPS = {
         "repo": "covidmap/ui",
         "local": "./ui",
         "forceLocal": False,  # flip to `True` to build against local submodule
-        "target": "a968ce856229f50bf568d08fd00a33f4a3e2c7f0",
+        "target": "7fd1946cb195a25e66407fcfc634a46e87d255c0",
         "overlay": "covidmap_ui.bzl",
-        "seal": "4dc76cdc394f66adac279b5d3260a63996d81798ebb7128f130422033bf88f9e"},
+        "seal": "08c66445191829cbcd22689340ef34c52db03504042b7c45bfa62d7c62d3c4ee"},
 
     # MaxMind GeoIP Database
     "maxmind": {

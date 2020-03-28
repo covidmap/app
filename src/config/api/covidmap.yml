@@ -2,7 +2,7 @@
 type: google.api.Service
 config_version: 3
 
-name: covidmap.elide.tools
+name: app.endpoints.covid-impact-map.cloud.goog
 title: COVID Impact Map API
 
 apis:
@@ -20,8 +20,8 @@ authentication:
         - provider_id: firebase
 
 endpoints:
-  - name: covidmap.elide.tools
-    target: covidmap.elide.tools
+  - name: covidmap.api.bloomworks.io
+    target: rpc.covidmap.link
     allow_cors: false
 
 system_parameters:
@@ -34,9 +34,6 @@ system_parameters:
           http_header: X-API-Key
         - name: trace
           http_header: X-API-Trace-ID
-
-enums:
-  - covidmap.AppError
 
 metrics:
   - name: "class-a-ops"

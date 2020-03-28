@@ -9,6 +9,11 @@ load(
 )
 
 load(
+    "@bazel_tools//tools/build_defs/pkg:pkg.bzl",
+    "pkg_tar",
+)
+
+load(
     "@gust//defs/toolchain:deps.bzl",
     "maven",
 )
@@ -48,6 +53,10 @@ service(
     ]
 )
 
+pkg_tar(
+    name = "covidmap_proto_pkg",
+    srcs = [":covidmap_proto"],
+)
 
 alias(
     name = "frontend",
@@ -84,6 +93,7 @@ micronaut_library(
     srcs = ["server/CovidmapLogic.kt"],
     proto_deps = [":covidmap_proto"],
     deps = [
+        "@com_google_guava",
         "@jdeps//:com_maxmind_db_maxmind_db",
         "@jdeps//:com_maxmind_geoip2_geoip2",
     ]

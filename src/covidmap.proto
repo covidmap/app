@@ -510,6 +510,9 @@ service App {
   // Supplies an endpoint to submit a report to the application. Reports are accepted by the app at this endpoint from
   // any source (within reason, and quotas apply).
   rpc Report(ReportSubmission) returns (google.protobuf.Empty) {
-    option (google.api.http).post = "/v1/report";
+    option (google.api.http) = {
+      post: "/v1/report"
+      body: "*"
+    };
   }
 }

@@ -4,6 +4,7 @@ package server
 import com.maxmind.db.Reader.FileMode
 import com.maxmind.geoip2.DatabaseProvider
 import com.maxmind.geoip2.DatabaseReader
+import covidmap.schema.Report
 import gust.backend.runtime.Logging
 import org.slf4j.Logger
 import javax.inject.Singleton
@@ -22,6 +23,9 @@ import java.io.IOException
  */
 @Singleton
 class CovidmapLogic {
+  /** Executor for async tasks. */
+  private val executor: String? = null
+
   /** Manages the MaxMind GeoIP database. */
   object MaxMindManager {
     /** Where we can find the MaxMind database. */
@@ -50,4 +54,18 @@ class CovidmapLogic {
 
   /** Retrieve the MaxMind database provider. */
   fun maxmind(): DatabaseProvider = maxmindDb
+
+  /** Validate a report before submission. */
+  fun validateReport(email: String, report: Report): Boolean {
+    return report.isInitialized
+      && report.hasSource()
+      && report.hasSurvey()
+      && email.isNotEmpty()
+      && email.isNotBlank()
+  }
+
+  /** Prepare a report and submit to the database. */
+  fun prepareAndSubmitReport(report: Report) {
+
+  }
 }
