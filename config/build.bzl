@@ -23,6 +23,12 @@ DEPS = {
         "overlay": "covidmap_ui.bzl",
         "seal": "08c66445191829cbcd22689340ef34c52db03504042b7c45bfa62d7c62d3c4ee"},
 
+    # Facility Data
+    "facilities": {
+        "type": "file",
+        "target": "https://storage.googleapis.com/covid-impact-data/b1/facilities/03272020.json.gz",
+        "seal": "6e0556fc442cf457c6a54ef83e69b74e60d3db2ded0c6c64f1b56be8aa1ef3e0"},
+
     # MaxMind GeoIP Database
     "maxmind": {
         "type": "archive",
