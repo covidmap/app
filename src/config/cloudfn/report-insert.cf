@@ -173,7 +173,7 @@ function createRowData(formData) {
 			location: null /* Note: not currently in formData */
 		}
 		report: {
-			positive:  (BOOLEAN)
+			positive: null, /* Note: not currently in formData */
 			waitTime: formData.report.survey.waitTime.seconds,
 			delta: {
 				better: formData.report.survey.better,
