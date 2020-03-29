@@ -89,24 +89,6 @@ style_binary(
 # TypeScript
 #
 
-_SOURCE_PATHS = [
-    "src/common/*",
-    "src/common/models/*",
-    "src/store/*",
-    "src/store/models/*",
-    "src/store/dataQuery/*",
-    "src/logger/*",
-    "src/logger/models/*",
-    "src/view/views/*",
-    "src/view/views/**/*",
-    "src/view/models/*",
-    "src/view/viewRegistry/*",
-    "src/dispatcher/*",
-    "src/dispatcher/models/*",
-    "src/util/*",
-    "src/bootstrap/bootstrapper",
-]
-
 ts_config(
     name = "tsconfig",
     src = "@covidmap//src/config:tsconfig.json",
@@ -117,7 +99,10 @@ ts_module(
     name = "ts",
     runtime = "browser",
     tsconfig = ":tsconfig",
-    srcs = glob(["%s.ts" % i for i in _SOURCE_PATHS]),
+    srcs = glob(
+        include = ["src/**/*.ts"],
+        exclude = ["src/**/test/*.*"],
+    ),
     deps = [
         "@npm//@types/node",
         "@npm//crypto-random-string",

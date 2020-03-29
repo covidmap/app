@@ -26,6 +26,16 @@ public final class AppConfig {
     private static final String measurementId = "G-Q07TZ2VYKG";
   }
 
+  /**  */
+  @JsType
+  public static final class Algolia {
+    /** Application ID to use. */
+    private static final String appId = "BHFN217Q8E";
+
+    /** API key to use (only allows search - no writes). */
+    private static final String apiKey = "24081f5151284b3245ba17663dea34ca";
+  }
+
   /** @return Firebase API key. */
   public static String getApiKey() {
     return Firebase.apiKey;

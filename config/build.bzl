@@ -19,9 +19,9 @@ DEPS = {
         "repo": "covidmap/ui",
         "local": "./ui",
         "forceLocal": False,  # flip to `True` to build against local submodule
-        "target": "bab6313a689d382469f6152d8e51856235dae4d5",
+        "target": "96eabafead6d7459bad52111c391e844210aea98",
         "overlay": "covidmap_ui.bzl",
-        "seal": "9fe882980ae53fcd41632b051ae429d47a1461ccd3837e29ea6bbb67bcc1d462"},
+        "seal": "108cee9b53798974064f3fd37e75a19f03cee70d826b0ba885a774682772e3ab"},
 
     # Facility Data
     "facilities": {

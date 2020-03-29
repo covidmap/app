@@ -10,8 +10,8 @@ load(
 
 
 LOCAL = False
-GUST_VERSION = "2e9281cc0d4e7bf90d3adedc12c2d57b3da9f46e"
-GUST_FINGERPRINT = "bba9f28e273952fac9fd2110fe6a388a4ecb53490b4a378fcab83b197d9ce546"
+GUST_VERSION = "ef8864f00b75bafbf5caac02f6bcc805ebb7d2d5"
+GUST_FINGERPRINT = "6debeafd63396c4316f89acbdef86cdd16038794df10033b8fba8eed4f1ba856"
 
 (local_repository(
     name = "gust",

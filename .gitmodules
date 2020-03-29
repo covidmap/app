@@ -5,5 +5,5 @@
 
 [submodule "ui"]
 	path = ui
-	branch = master
+	branch = fix/old-import
 	url = git@github.com:covidmap/ui.git
