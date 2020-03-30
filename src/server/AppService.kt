@@ -67,6 +67,24 @@ class AppService @Inject constructor (private val logic: CovidmapLogic): AppGrpc
   }
 
   /**
+   * Retrieve an individual healthcare facility, addressed by its unique ID. If the facility cannot be located, throw a
+   * 404-style error. If no ID is specified for the provided key, a client-side error is thrown.
+   *
+   * @param request Request that specifies the key for the facility to return.
+   * @param observer Stream observer upon which to emit resolved data.
+   */
+  override fun facilityByKey(request: Facility.FacilityKey, observer: StreamObserver<Facility>) {
+    if (request.isInitialized && request.id.isNotEmpty()) {
+      logic.respond(logic.facilityFetch(request), observer)
+    } else {
+      logging.error("Reecting facility fetch: invalid key.")
+      val errMetadata = Metadata()
+      errMetadata.put(CovidmapLogic.errorMessageHeader, "Invalid key.")
+      observer.onError(Status.INVALID_ARGUMENT.asRuntimeException())
+    }
+  }
+
+  /**
    * Produce a set of stats, for each facility that is relevant within a given area. If no relevant area is passed into
    * the query to use as a geo-boundary, one is calculated by geo-locating the client's remote IP address.
    *
@@ -101,7 +119,7 @@ class AppService @Inject constructor (private val logic: CovidmapLogic): AppGrpc
    */
   override fun report(request: ReportSubmission, observer: StreamObserver<Empty>) {
     if (logic.validateReport(request.email, request.report)) {
-      logic.prepareAndSubmitReport(request.email, request.report)
+      logic.prepareAndSubmitReport(request.facility, request.email, request.report)
     } else {
       logging.error("Invalid report. Rejecting.")
       val errMetadata = Metadata()

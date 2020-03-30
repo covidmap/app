@@ -174,6 +174,9 @@ class FacilitiesManager private constructor (
     }
   }
 
+  /** Resolve a single facility by its ID. */
+  fun resolve(id: String): Facility? = keyIndex[id]
+
   /** Retrieve a non-parallel stream of all [Facility] records. */
   fun stream(): Stream<Facility> = data.stream()
 

@@ -2,6 +2,7 @@
 
 package server
 
+import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture as Future
 import com.google.common.util.concurrent.ListeningScheduledExecutorService
 import com.google.common.util.concurrent.MoreExecutors
@@ -11,6 +12,7 @@ import com.maxmind.geoip2.DatabaseReader
 import covidmap.schema.*
 import gust.backend.runtime.Logging
 import io.grpc.Metadata
+import io.grpc.Status
 import io.grpc.stub.StreamObserver
 import org.slf4j.Logger
 import javax.inject.Singleton
@@ -126,10 +128,16 @@ class CovidmapLogic {
   fun <T> respond(future: Future<T>, observer: StreamObserver<T>) {
     future.addListener(Runnable {
       try {
-        val value = future.get()
-        if (value != null)
-          observer.onNext(value)
-        observer.onCompleted()
+        if (future.isCancelled) {
+          // throw a 404 if cancelled (we signal this from facility fetch)
+          logging.warn("Failed to locate record: cancelling operation.")
+          observer.onError(Status.NOT_FOUND.asException())
+        } else {
+          val value = future.get()
+          if (value != null)
+            observer.onNext(value)
+          observer.onCompleted()
+        }
 
       } catch (exc: Exception) {
         logging.error("An error occurred while processing an RPC operation: ${exc.message}")
@@ -159,6 +167,15 @@ class CovidmapLogic {
       .build()
   }
 
+  /** Fetch the specified facility and return it, if it can be found. */
+  fun facilityFetch(key: Facility.FacilityKey): Future<Facility> {
+    val facility = facilities.resolve(key.id)
+    if (facility != null) {
+      return Futures.immediateCancelledFuture()
+    }
+    return Futures.immediateFuture(facility)
+  }
+
   /** Execute a query against the static facility dataset. */
   fun facilityQuery(query: GenericQuery): Future<FacilityList> {
     return task {
@@ -181,7 +198,7 @@ class CovidmapLogic {
   }
 
   /** Prepare a report and submit to the database. */
-  fun prepareAndSubmitReport(email: String, report: Report): Future<String> {
+  fun prepareAndSubmitReport(key: Facility.FacilityKey, email: String, report: Report): Future<String> {
     return task {
       val reportID = UUID.randomUUID().toString().toUpperCase()
       logging.info("Delivering report at ID '$reportID' for email '$email'.")

@@ -584,6 +584,9 @@ message ReportSubmission {
 
   // Email address of the person submitting the report.
   string email = 2;
+
+  // Specifies the facility to which this report is relevant.
+  Facility.FacilityKey facility = 3;
 }
 
 
@@ -596,6 +599,12 @@ service App {
   // the result is an empty successful response.
   rpc Health(google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http).get = "/v1/health";
+  }
+
+  // Fetch an individual healthcare facility, addressed by its row ID (as specified in the raw dataset included in the
+  // source code of this project). If it cannot be found, 404 will be returned.
+  rpc FacilityByKey(Facility.FacilityKey) returns (Facility) {
+    option (google.api.http).get = "/v1/facilities/{id}";
   }
 
   // Produce a list of known healthcare facilities, for which the COVID Impact Map tracker receives reports. This
@@ -614,7 +623,7 @@ service App {
   // any source (within reason, and quotas apply).
   rpc Report(ReportSubmission) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/v1/report"
+      post: "/v1/report/{facility.id}"
       body: "*"
     };
   }
