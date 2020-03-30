@@ -18,6 +18,7 @@ INSERT INTO us.tracked (
     altNames,
     owner,
     capabilities,
+    name,
     naics,
     status,
     open
@@ -100,8 +101,10 @@ SELECT
     (ARRAY_LENGTH(traumaTypes) > 0, pediatric, traumaTypes)
   ),
 
+  -- name
+  name,
+
   -- NAICS / status
   naicsCode, status, open
 
 FROM src
-

@@ -80,7 +80,7 @@ js_module(
         "@gust//js/gust:logging",
         "@gust//java/gust:Core-j2cl",
         js_service("//src:covidmap_proto"),
-        js_proto("@gust//js:empty_proto"),
+        js_proto("@gust//gust/core:empty_proto"),
     ],
 )
 

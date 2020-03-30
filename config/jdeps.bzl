@@ -35,6 +35,7 @@ def java_repositories():
         artifacts = [
             "ch.hsr:geohash:1.4.0",
             "com.google.code.gson:gson:2.8.6",
+            "com.googlecode.libphonenumber:libphonenumber:8.12.0",
             "com.google.cloud:google-cloud-bigquery:1.110.0",
             "com.maxmind.db:maxmind-db:1.3.1",
             "com.maxmind.geoip2:geoip2:2.13.1",

@@ -114,14 +114,29 @@ micronaut_library(
     srcs = ["server/FacilitiesManager.kt"],
     proto_deps = [":covidmap_proto"],
     deps = [
+        ":FacilitiesDecoder",
         "@com_google_guava",
         "@jdeps//:ch_hsr_geohash",
-        "@jdeps//:com_google_code_gson_gson",
         "@jdeps//:com_google_cloud_google_cloud_bigquery",
     ],
     resource_jars = [
         ":facilities-data",
     ],
+)
+
+micronaut_library(
+    name = "FacilitiesDecoder",
+    srcs = ["server/FacilityDecoder.java"],
+    proto_deps = [
+        ":covidmap_proto",
+        "@gust//gust/core:latlng_proto",
+    ],
+    deps = [
+        "@com_google_guava",
+        "@jdeps//:ch_hsr_geohash",
+        "@jdeps//:com_google_code_gson_gson",
+        "@jdeps//:com_googlecode_libphonenumber_libphonenumber",
+    ]
 )
 
 micronaut_service(

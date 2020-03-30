@@ -7,6 +7,7 @@ test_suite(
     name = "suite",
     testonly = True,
     tests = [
+        "//javatests/util:FacilitiesDataTest",
         "//javatests/util:GeohashConsistencyTest",
     ],
 )

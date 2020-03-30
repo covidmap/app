@@ -6,6 +6,7 @@ import jsinterop.annotations.JsType;
 
 /** Holds static credentials in a cross-platform lib. */
 @JsType
+@SuppressWarnings("unused")
 public final class AppConfig {
   /** API endpoint to use. */
   private static final String apiEndpoint = "https://beta.covidmap.link/v1/";
@@ -26,7 +27,7 @@ public final class AppConfig {
     private static final String measurementId = "G-Q07TZ2VYKG";
   }
 
-  /**  */
+  /** Configuration for Algolia. */
   @JsType
   public static final class Algolia {
     /** Application ID to use. */
