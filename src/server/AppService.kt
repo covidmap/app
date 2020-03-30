@@ -23,9 +23,6 @@ class AppService @Inject constructor (private val logic: CovidmapLogic): AppGrpc
   companion object {
     /** Private logging pipe. */
     private val logging: Logger = Logging.logger(AppService::class.java)
-
-    /** Header containing an error message. */
-    private val errorMessageHeader = Metadata.Key.of("x-error-message", Metadata.ASCII_STRING_MARSHALLER)
   }
 
   /**
@@ -64,7 +61,7 @@ class AppService @Inject constructor (private val logic: CovidmapLogic): AppGrpc
     } else {
       logging.error("Rejecting facilities query: invalid.")
       val errMetadata = Metadata()
-      errMetadata.put(errorMessageHeader, "Invalid query.")
+      errMetadata.put(CovidmapLogic.errorMessageHeader, "Invalid query.")
       observer.onError(Status.INVALID_ARGUMENT.asRuntimeException())
     }
   }
@@ -86,7 +83,7 @@ class AppService @Inject constructor (private val logic: CovidmapLogic): AppGrpc
     } else {
       logging.error("Rejecting stats query: invalid.")
       val errMetadata = Metadata()
-      errMetadata.put(errorMessageHeader, "Invalid query.")
+      errMetadata.put(CovidmapLogic.errorMessageHeader, "Invalid query.")
       observer.onError(Status.INVALID_ARGUMENT.asRuntimeException())
     }
   }
@@ -104,11 +101,11 @@ class AppService @Inject constructor (private val logic: CovidmapLogic): AppGrpc
    */
   override fun report(request: ReportSubmission, observer: StreamObserver<Empty>) {
     if (logic.validateReport(request.email, request.report)) {
-
+      logic.prepareAndSubmitReport(request.email, request.report)
     } else {
       logging.error("Invalid report. Rejecting.")
       val errMetadata = Metadata()
-      errMetadata.put(errorMessageHeader, "Invalid query.")
+      errMetadata.put(CovidmapLogic.errorMessageHeader, "Invalid query.")
       observer.onError(Status.INVALID_ARGUMENT.asRuntimeException())
     }
   }

@@ -72,6 +72,9 @@ alias(
 micronaut_interceptor(
     name = "CovidmapInterceptor",
     srcs = ["server/CovidmapInterceptor.kt"],
+    deps = [
+        ":CovidmapLogic",
+    ]
 )
 
 micronaut_library(
@@ -99,6 +102,8 @@ micronaut_library(
         "@jdeps//:com_maxmind_db_maxmind_db",
         "@jdeps//:com_maxmind_geoip2_geoip2",
         maven("com.google.cloud:google-cloud-pubsub"),
+        maven("io.grpc:grpc-api"),
+        maven("io.grpc:grpc-services"),
     ]
 )
 

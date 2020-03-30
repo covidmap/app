@@ -63,10 +63,10 @@ class FacilitiesManager private constructor (
     private const val filepath = "/external/facilities/file/downloaded"
 
     /** Minimum length of a geo-hash substring. */
-    private const val minimumGeohashLength = 2
+    const val minimumGeohashLength = 2
 
     /** Precision of the geohash calculations we make. */
-    private const val geohashCharacterSize = 12
+    const val geohashCharacterSize = 12
 
     /** Private logging pipe. */
     private val logging = Logging.logger(FacilitiesManager::class.java)

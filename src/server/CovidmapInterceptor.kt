@@ -1,8 +1,12 @@
 
 package server
 
+import ch.hsr.geohash.GeoHash
+import com.google.type.LatLng
 import io.grpc.*
+import java.net.InetAddress
 import javax.annotation.concurrent.Immutable
+import javax.inject.Inject
 import javax.inject.Singleton
 
 
@@ -23,7 +27,34 @@ import javax.inject.Singleton
  */
 @Singleton
 @Immutable
-class CovidmapInterceptor: ServerInterceptor {
+class CovidmapInterceptor @Inject constructor (private val logic: CovidmapLogic): ServerInterceptor {
+  companion object {
+    /** HTTP header indicating the client's true IP. */
+    private const val clientIpHeader = "CF-Connecting-IP"
+
+    /** HTTP header indicating the client's location. */
+    private const val clientLatLong = "K9-GSLB-Client-Location"
+
+    /** Header containing the user's IP. */
+    val cfConnectingIpHeader: Metadata.Key<String> = (
+      Metadata.Key.of(clientIpHeader, Metadata.ASCII_STRING_MARSHALLER))
+
+    /** Header containing the edge machine's Lat/Lng (or the user's lat/lng if CloudFlare is inactive). */
+    val k9LocationHeader: Metadata.Key<String> = (
+      Metadata.Key.of(clientLatLong, Metadata.ASCII_STRING_MARSHALLER))
+
+    /** Specifies location data for a given user. */
+    val userLocationDataKey: Context.Key<UserLocation> = Context.key("clientLocation")
+  }
+
+  /** Describes user-location detection sniffing that occurs in the interceptor. */
+  data class UserLocation(
+    /** Geopoint auto-inferred by edge systems. */
+    private val point: LatLng,
+
+    /** Geohash associated with the specified IP or point. */
+    private val hash: String)
+
   /**
    * Performs the interception of RPC traffic through the [AppService], enforces authentication requirements like API
    * key presence and validity, and loads the active user through any affixed `Authorization` header. If *any* of the
@@ -46,6 +77,68 @@ class CovidmapInterceptor: ServerInterceptor {
                                                            metadata: Metadata,
                                                            handler: ServerCallHandler<Request, Response>):
                                                                                           ServerCall.Listener<Request> {
+    val coordinates: LatLng? = when {
+      metadata.containsKey(cfConnectingIpHeader) -> {
+        val ip: String? = metadata.get(cfConnectingIpHeader)
+        if (ip != null) {
+          val cityResolution = logic.maxmind().tryCity(InetAddress.getByName(ip))
+          if (cityResolution.isPresent) {
+            val geoip = cityResolution.get()
+
+            LatLng.newBuilder()
+              .setLatitude(geoip.location.latitude)
+              .setLongitude(geoip.location.longitude)
+              .build()
+          } else {
+            null  // can't resolve: unable to trace IP
+          }
+        } else {
+          null  // can't resolve: no IP value (weird)
+        }
+      }
+
+      metadata.containsKey(k9LocationHeader) -> {
+        val headerValue = metadata.get(k9LocationHeader)
+        if (headerValue != null) {
+          val split = headerValue.split(",")
+          if (split.size == 2) {
+            val latitude = split[0].toDoubleOrNull()
+            val longitude = split[1].toDoubleOrNull()
+            if (latitude != null && longitude != null) {
+              LatLng.newBuilder()
+                .setLatitude(latitude)
+                .setLongitude(longitude)
+                .build()
+            } else {
+              null  // lat or long failed to decode
+            }
+          } else {
+            null  // more or less than (lat, long) after split
+          }
+        } else {
+          null  // no header value at all - metadata lied to us
+        }
+      }
+
+      else -> null
+    }
+    if (coordinates != null) {
+      val ctx = Context.current().withValue(userLocationDataKey,
+        UserLocation(
+          point = coordinates,
+          hash = GeoHash.withCharacterPrecision(
+            coordinates.latitude,
+            coordinates.longitude,
+            FacilitiesManager.geohashCharacterSize
+          ).toBase32()
+        )
+      )
+
+      val old = ctx.attach()
+      val result = handler.startCall(call, metadata)
+      ctx.detach(old)
+      return result
+    }
     return handler.startCall(call, metadata)
   }
 }

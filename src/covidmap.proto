@@ -473,20 +473,23 @@ message Report {
   // Specifies a salted hash of the submitter's email address, so that their reports may be grouped/de-duped.
   string submitter = 2;
 
+  // Rough geo-hash of the report's origin, based on the user's IP.
+  string geohash = 3;
+
   // Source information for this report submission.
-  ReportSourcing source = 3;
+  ReportSourcing source = 4;
 
   // Reports answers to the survey questions submitted by the user as part of this report.
-  ReportQuestions survey = 4;
+  ReportQuestions survey = 5;
 
   // Notes to apply to the report, in free-form, with limited support for Markdown-based formatting.
-  string notes = 5;
+  string notes = 6;
 
   // Timestamp indicating when this record was last modified.
-  google.protobuf.Timestamp modified = 6 [(core.field).stamp_update = true];
+  google.protobuf.Timestamp modified = 7 [(core.field).stamp_update = true];
 
   // Timestamp indicating when this record was originally created.
-  google.protobuf.Timestamp created = 7 [(core.field).stamp_create = true];
+  google.protobuf.Timestamp created = 8 [(core.field).stamp_create = true];
 }
 
 
