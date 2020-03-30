@@ -26,8 +26,8 @@ DEPS = {
     # Facility Data
     "facilities": {
         "type": "file",
-        "target": "https://storage.googleapis.com/covid-impact-data/b1/facilities/03272020.json.gz",
-        "seal": "6e0556fc442cf457c6a54ef83e69b74e60d3db2ded0c6c64f1b56be8aa1ef3e0"},
+        "target": "https://storage.googleapis.com/covid-impact-data/b1/facilities/03302020.json.gz",
+        "seal": "eecf30dae1020d8f504954067e464e33a1c57cbdc716fe3609fb3b23d6e976e3"},
 
     # MaxMind GeoIP Database
     "maxmind": {

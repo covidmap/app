@@ -194,7 +194,6 @@ public final class FacilityDecoder {
         case "ATH": resolved = TraumaType.ATH; break;
         case "TRAUMA SYSTEM HOSPITAL": resolved = TraumaType.TRAUMA_SYSTEM_HOSPITAL; break;
         case "RTC": resolved = TraumaType.RTC; break;
-        case "REGIONAL TRAUMA CENTER": resolved = TraumaType.REGIONAL_TRAUMA_CENTER; break;
         case "RTH": resolved = TraumaType.RTH; break;
         case "AREA": resolved = TraumaType.AREA; break;
         case "CTF": resolved = TraumaType.CTF; break;

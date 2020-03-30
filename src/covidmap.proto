@@ -142,9 +142,6 @@ message Facility {
     AREA = 13;
 
     // Unknown.
-    REGIONAL_TRAUMA_CENTER = 14;
-
-    // Unknown.
     TRAUMA_SYSTEM_HOSPITAL = 15;
 
     // Unknown.
