@@ -1,0 +1,199 @@
+/*
+	Initial Author: Jason Baker (jason@onejasonforsale.com)
+	Project: CovidMap App - https://github.com/covidmap/app
+
+	This Cloud Function converts a user's report data into our BigQuery database's format
+	and stores a new row in the DB.
+
+	Control flow:
+
+	1. User submits CovidMap report form to API.
+	2. API quickly calls this Cloud Function to store user's report information in DB async.
+	3. API returns 200 to user's browser asap without waiting on this CF to finish.
+
+	Parameter Info
+
+	1. The data being submitted to this CF is already PII sanitized.
+	2. The data being submitted is already cleaned for sql-injection attacks.
+
+	Example Input: 
+
+	{
+		"email": "john@doe.com", /* Note: this won't be stored in DB */
+		"notes": "Optional notes here"
+		"report": {
+			"source": {
+				"firstHand": true,
+				"secondHand": false,
+				"socialMedia": false,
+				"healthcare": false,
+				"uri": "https://uri-required-if-social.com/blah",
+				"description": "Optional description available for any option"
+			},
+			"survey": {
+				"waitTime": {"seconds": 3600},
+				"shortage": true,
+				"pressure": true,
+				"better": false,
+				"worse": true,
+				"resource": [
+					{
+						"knownResource": "MASKS_N95",
+						"shortage": true,
+						"pressure": true,
+						"suppliesFor": {"seconds": 86400}
+					},
+					{
+						"otherResource": "Something else freeform",
+						"shortage": true,
+						"pressure": false,
+						"suppliesFor": {"seconds": 604800}
+					}
+				]
+			},		
+		}
+	}		
+
+	Target Table: covid-impact-map.us.reports
+
+	Target Table Schema: 
+
+	received (TIMESTAMP)
+	ingested (TIMESTAMP)
+	facility (STRING)
+	reporter (RECORD)
+	reporter.ip (BYTES)
+	reporter.identity (STRING)
+	reporter.tz (STRING)
+	reporter.local (TIMESTAMP)
+	reporter.sourcing (RECORD)
+	reporter.sourcing.firstHand (BOOLEAN)
+	reporter.sourcing.secondHand (BOOLEAN)
+	reporter.sourcing.socialMedia (BOOLEAN)
+	reporter.sourcing.healthcare (BOOLEAN)
+	reporter.sourcing.uri (STRING)
+	reporter.sourcing.description (STRING)
+	reporter.location (RECORD)
+	reporter.location.point (GEOGRAPHY)
+	reporter.location.latitude (FLOAT)
+	reporter.location.longitude (FLOAT)
+	reporter.location.hash (STRING)
+	report (RECORD)
+	report.positive (BOOLEAN)
+	report.waitTime (INTEGER)
+	report.delta (RECORD)
+	report.delta.better (BOOLEAN)
+	report.delta.worse (BOOLEAN)
+	report.resources (RECORD)
+	report.resources.underPressure (RECORD)
+	report.resources.underPressure.known (STRING)
+	report.resources.underPressure.other (STRING)
+	report.resources.underPressure.shortage (BOOLEAN)
+	report.resources.underPressure.pressure (BOOLEAN)
+	report.resources.underPressure.suppliesFor (INTEGER)
+	report.notes (STRING)
+
+	Development resources:
+
+	  * Example of biqQuery api: https://github.com/googleapis/nodejs-bigquery/blob/master/samples/insertRowsAsStream.js
+	  * Tutorial: https://medium.com/@asajharland/effective-data-loading-with-bigquery-batch-loading-flat-files-bf2fd0ebb325
+	  * Another Tutorial: https://medium.com/@milosevic81/copy-data-from-pub-sub-to-bigquery-496e003228a1
+	  * Another: https://www.e-nor.com/blog/bigquery/cloud-functions-bigquery-data-feed-automation
+
+*/
+
+'use strict';
+
+const BigQuery = require('@google-cloud/bigquery');
+const bigquery = new BigQuery();
+
+exports.helloPubSub = (data, context) => {
+	var debug = true;
+	if (debug) {
+		console.log("Converting input params for database.", { data: data, context: context })
+	}
+
+	const reportRowData = createReportRowData(data);
+
+	if (debug) {
+		console.log("Created row data, preparing for async insert.", { reportRowData: reportRowData, originalData: data });
+	}
+
+	async function insertRowsAsStream(rowData) {
+		console.log("Starting async insertion.");
+		await bigquery.dataset("us").table("reports").insert(rowData);
+		console.log("Inserted ${rowData.length} rows");
+	}
+	insertRowsAsStream(reportRowData);
+
+	if (debug) {
+		console.log("Async insertion was called.");
+	}
+};
+
+function createReportRowData(reportData) {
+		
+	// helper fn to ensure our code below doesn't blow up on nulls
+	function denull(obj, default) {
+		// if default passed in is null, make default an Object
+		default = defaul == null ? new Object() : default;
+
+		// if object passed in is null, return a default that isn't null
+		return obj == null ? default : obj;
+	}
+
+	//clean up our input data in case some part of it is null
+	reportData = denull(reportData);
+	reportData.report = denull(reportData.report);
+	reportData.report.source = denull(reportData.report.source);
+	reportData.report.survey = denull(reportData.report.survey);
+	reportData.report.survey.resource = denull(reportData.report.survey.resource, []);
+	reportData.report.survey.waitTime = denull(reportData.report.survey.waitTime);
+
+	var receivedDate = new Date(); //FIXME: should this be set here or by API?
+	var ingestedDate = new Date(); //FIXME: this means when the CF is ingesting, correct?
+
+	var rowData = {
+		received: receivedDate,
+		ingested: ingestedDate, 
+		facility: null, /* Note: not currently in reportData */
+		reporter: {
+			ip: null, /* Note: not currently in reportData */
+			identity: null, /* Note: not currently in reportData */
+			tz: null, /* Note: not currently in reportData */
+			local: null, /* Note: not currently in reportData */
+			sourcing: {
+				firstHand: reportData.report.source.firstHand,
+				secondHand: reportData.report.source.secondHand,
+				socialMedia: reportData.report.source.socialMedia,
+				healthcare: reportData.report.source.healthcare,
+				uri: reportData.report.source.uri,
+				description: reportData.report.source.description
+			},
+			location: null /* Note: not currently in reportData */
+		}
+		report: {
+			positive: null, /* Note: not currently in reportData */
+			waitTime: reportData.report.survey.waitTime.seconds,
+			delta: {
+				better: reportData.report.survey.better,
+				worse: reportData.report.survey.worse,
+			},			
+			notes: reportData.notes,
+			resources: []
+		}		
+	};
+
+	for (var resource of reportData.report.resource) {
+		resource.suppliesFor = denull(resource.suppliesFor);
+		rowData.report.resources.push({
+			underPressure: {
+				known: resource.knownResource,
+				other: resource.otherResource,
+				shortage: resource.shortage,
+				pressure: resource.pressure,
+				suppliesFor: resource.suppliesFor.seconds
+			}
+		});
+	}	
+}
