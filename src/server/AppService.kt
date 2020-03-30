@@ -3,8 +3,13 @@ package server
 
 import com.google.protobuf.Empty
 import covidmap.schema.*
+import gust.backend.runtime.Logging
+import io.grpc.Metadata
+import io.grpc.Status
 import io.grpc.stub.StreamObserver
 import io.micronaut.grpc.annotation.GrpcService
+import org.slf4j.Logger
+import javax.inject.Inject
 import javax.inject.Singleton
 
 
@@ -14,7 +19,15 @@ import javax.inject.Singleton
  */
 @Singleton
 @GrpcService
-class AppService: AppGrpc.AppImplBase() {
+class AppService @Inject constructor (private val logic: CovidmapLogic): AppGrpc.AppImplBase() {
+  companion object {
+    /** Private logging pipe. */
+    private val logging: Logger = Logging.logger(AppService::class.java)
+
+    /** Header containing an error message. */
+    private val errorMessageHeader = Metadata.Key.of("x-error-message", Metadata.ASCII_STRING_MARSHALLER)
+  }
+
   /**
    * Implements the `Health` service method, which simply checks the health of the App API itself, and reports back
    * whether there are any known issues, or that the service is working as intended. Transient issues with database
@@ -46,7 +59,14 @@ class AppService: AppGrpc.AppImplBase() {
    * @param observer Observer for a materialized facility list response.
    */
   override fun facilities(request: GenericQuery, observer: StreamObserver<FacilityList>) {
-    TODO("not yet implemented")
+    if (logic.validateQuery(request)) {
+      logic.respond(logic.facilityQuery(request), observer)
+    } else {
+      logging.error("Rejecting facilities query: invalid.")
+      val errMetadata = Metadata()
+      errMetadata.put(errorMessageHeader, "Invalid query.")
+      observer.onError(Status.INVALID_ARGUMENT.asRuntimeException())
+    }
   }
 
   /**
@@ -61,7 +81,14 @@ class AppService: AppGrpc.AppImplBase() {
    * @param observer Observer for a materialized facility stats response.
    */
   override fun stats(request: StatsQuery, observer: StreamObserver<FacilityStatsList>) {
-    TODO("not yet implemented")
+    if (logic.validateQuery(request)) {
+      logic.respond(logic.facilityStats(request), observer)
+    } else {
+      logging.error("Rejecting stats query: invalid.")
+      val errMetadata = Metadata()
+      errMetadata.put(errorMessageHeader, "Invalid query.")
+      observer.onError(Status.INVALID_ARGUMENT.asRuntimeException())
+    }
   }
 
   /**
@@ -76,6 +103,13 @@ class AppService: AppGrpc.AppImplBase() {
    * @param observer Observer for a response indicating an accepted report.
    */
   override fun report(request: ReportSubmission, observer: StreamObserver<Empty>) {
-    TODO("not yet implemented")
+    if (logic.validateReport(request.email, request.report)) {
+
+    } else {
+      logging.error("Invalid report. Rejecting.")
+      val errMetadata = Metadata()
+      errMetadata.put(errorMessageHeader, "Invalid query.")
+      observer.onError(Status.INVALID_ARGUMENT.asRuntimeException())
+    }
   }
 }
