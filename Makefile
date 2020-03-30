@@ -17,7 +17,9 @@ VERBOSE ?= no
 QUIET ?= yes
 CACHE ?= no
 STRICT ?= no
+COVERAGE ?= no
 BASE_ARGS ?= --define=covidmap_release_tag=$(VERSION)
+TEST_ARGS ?= $(BASE_ARGS)
 BAZELISK_ARGS ?=
 CACHE_KEY ?= CovidMap
 RELEASE ?= no
@@ -26,9 +28,29 @@ PROJECT ?= bloom-sandbox
 RBE_INSTANCE ?= default_instance
 IMAGE_PROJECT ?= covid-impact-map
 
+COVERABLE ?= //javatests:suite
+COVERAGE_REPORT ?= $(REPORTS)/coverage
+COVERAGE_ARGS ?= --function-coverage \
+                 --branch-coverage \
+                 --highlight \
+                 --demangle-cpp \
+                 --show-details \
+                 --title "$(PROJECT_NAME)" \
+                 --precision 2 \
+                 --legend \
+                 --rc genhtml_med_limit=60 \
+                 --rc genhtml_hi_limit=90
 
 BAZEL_BUILD_FLAGS ?= --protocopt=--include_imports --protocopt=--include_source_info
+TEST_ARGS_WITH_COVERAGE ?= --combined_report=lcov --nocache_test_results
 
+# Flag: `COVERAGE`
+ifeq ($(COVERAGE),yes)
+TEST_COMMAND ?= coverage
+TEST_ARGS += $(TEST_ARGS_WITH_COVERAGE)
+else
+TEST_COMMAND ?= test
+endif
 
 # Flag: `RELEASE`
 ifeq ($(RELEASE),yes)
@@ -70,7 +92,7 @@ endif
 ifeq ($(DEBUG),yes)
 VERBOSE = yes
 QUIET = no
-BASE_ARGS += --sandbox_debug
+BASE_ARGS += --sandbox_debug --test_output=errors
 endif
 
 # Flag: `VERBOSE`
@@ -83,6 +105,8 @@ else
 # Flag: `QUIET`
 ifeq ($(QUIET),yes)
 _RULE = @
+else
+BASE_ARGS += --test_output=errors
 endif
 endif
 
@@ -113,7 +137,7 @@ deploy:  ## Deploy the app to production.
 	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) run $(BASE_ARGS) $(ARGS) -- //src/config:app.$(ACTION)
 
 test:  ## Run any testsuites.
-	@echo "No tests yet."
+	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) $(TEST_COMMAND) $(TEST_ARGS) $(ARGS) -- //javatests:suite
 
 api:  ## Build and deploy the API service endpoint.
 	@echo "Building API binary..."

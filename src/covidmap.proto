@@ -210,28 +210,31 @@ message Facility {
   // Describes the type of facility specified by this record.
   FacilityType type = 2;
 
+  // Whether this facility is open or closed.
+  bool open = 3;
+
   // Specifies the broad category assigned to classify this facility.
-  FacilityCategory category = 3;
+  FacilityCategory category = 4;
 
   // Display name for the facility.
-  string name = 4;
+  string name = 5;
 
   // Alternate names for this facility.
-  repeated string alternate_name = 5;
+  repeated string alternate_name = 6;
 
   // Location details for this facility.
-  FacilityLocation location = 6;
+  FacilityLocation location = 7;
 
   // Contact information for this facility, potentially including email addresses, phone numbers,
-  FacilityContact contact = 7;
+  FacilityContact contact = 8;
 
   // `NAICS` code, for the facility, which describes the type of facility (in general terms). Stands for North American
   // Industry Classification System. Only present for US facilities. This code is further matched/resolved to produce
   // the `category` value assigned to this facility.
-  string naics = 8;
+  string naics = 9;
 
   // Specifies the capabilities known to exist at this facility.
-  FacilityCapabilities capabilities = 9;
+  FacilityCapabilities capabilities = 10;
 }
 
 

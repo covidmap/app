@@ -20,6 +20,7 @@ load(
 
 load(
     "@gust//defs/toolchain:backend.bzl",
+    java_library = "jdk_library",
     "micronaut_library",
     "micronaut_service",
     "micronaut_controller",
@@ -97,7 +98,15 @@ micronaut_library(
         "@com_google_guava",
         "@jdeps//:com_maxmind_db_maxmind_db",
         "@jdeps//:com_maxmind_geoip2_geoip2",
+        maven("com.google.cloud:google-cloud-pubsub"),
     ]
+)
+
+java_library(
+    name = "facilities-data",
+    resources = [
+        "@facilities//file:file",
+    ],
 )
 
 micronaut_library(
@@ -106,8 +115,13 @@ micronaut_library(
     proto_deps = [":covidmap_proto"],
     deps = [
         "@com_google_guava",
+        "@jdeps//:ch_hsr_geohash",
         "@jdeps//:com_google_code_gson_gson",
-    ]
+        "@jdeps//:com_google_cloud_google_cloud_bigquery",
+    ],
+    resource_jars = [
+        ":facilities-data",
+    ],
 )
 
 micronaut_service(

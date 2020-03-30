@@ -4,6 +4,7 @@ directories:
   tools
   external
   ui
+  javatests
   -vendor/
 
 build_flags:
@@ -15,12 +16,14 @@ java_language_level: 11
 
 targets:
   //src/...
+  //javatests/...
 
 ts_config_rules:
   //:tsconfig.json
 
 test_sources:
   - */tests/*
+  - */javatests/*
 
 additional_languages:
   java

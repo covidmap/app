@@ -8,10 +8,12 @@ load(
     "http_archive",
 )
 
-
-LOCAL = False
-GUST_VERSION = "ef8864f00b75bafbf5caac02f6bcc805ebb7d2d5"
-GUST_FINGERPRINT = "6debeafd63396c4316f89acbdef86cdd16038794df10033b8fba8eed4f1ba856"
+load(
+    "//config:gust.bzl",
+    "LOCAL",
+    "GUST_FINGERPRINT",
+    "GUST_VERSION",
+)
 
 (local_repository(
     name = "gust",

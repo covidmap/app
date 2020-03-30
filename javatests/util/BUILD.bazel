@@ -1,0 +1,15 @@
+
+load(
+    "@gust//defs/toolchain/java:testing.bzl",
+    java_test = "java_junit5_test",
+)
+
+java_test(
+    name = "GeohashConsistencyTest",
+    srcs = ["GeohashConsistencyTest.java"],
+    deps = ["@jdeps//:ch_hsr_geohash"],
+    test_package = "util",
+    classpath_resources = [
+        "@gust//java/gust:logback.xml",
+    ],
+)

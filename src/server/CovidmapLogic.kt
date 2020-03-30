@@ -2,12 +2,13 @@
 
 package server
 
+import com.google.common.util.concurrent.ListenableFuture as Future
 import com.google.common.util.concurrent.ListeningScheduledExecutorService
 import com.google.common.util.concurrent.MoreExecutors
 import com.maxmind.db.Reader.FileMode
 import com.maxmind.geoip2.DatabaseProvider
 import com.maxmind.geoip2.DatabaseReader
-import covidmap.schema.Report
+import covidmap.schema.*
 import gust.backend.runtime.Logging
 import org.slf4j.Logger
 import javax.inject.Singleton
@@ -34,35 +35,38 @@ class CovidmapLogic {
   /** Manages the MaxMind GeoIP database. */
   object MaxMindManager {
     /** Where we can find the MaxMind database. */
-    private const val dbname = "/maxmind.mmdb"
+    const val dbname = "/maxmind.mmdb"
 
     /** Mode to open the MaxMind DB file in. */
-    private val mode = FileMode.MEMORY
+    val mode = FileMode.MEMORY
+  }
 
+  companion object {
     /** Private logging pipe. */
     private val logging: Logger = Logging.logger(CovidmapLogic::class.java)
 
     /** Load the MaxMind GeoIP database during server startup. */
     @Throws(IOException::class)
     fun loadMaxmind(): DatabaseProvider {
-      BufferedInputStream(CovidmapLogic::class.java.getResourceAsStream(dbname)).use { buffer ->
-        logging.info("Loading MaxMind database (mode: ${mode.name})...")
+      BufferedInputStream(CovidmapLogic::class.java.getResourceAsStream(MaxMindManager.dbname)).use { buffer ->
+        logging.info("Loading MaxMind database (mode: ${MaxMindManager.mode.name})...")
         return DatabaseReader.Builder(buffer)
           .locales(listOf("en-US"))
-          .fileMode(mode)
+          .fileMode(MaxMindManager.mode)
           .build()
       }
     }
 
-    /** Supply an instance of the [FacilitiesManager], which loads static health facilitiy data. */
+    /** Supply an instance of the [FacilitiesManager], which loads static health facility data. */
     @Throws(IOException::class)
-    fun loadFacilities(): FacilitiesManager? {
-      return null
-    }
+    fun loadFacilities(): FacilitiesManager = FacilitiesManager.load()
   }
 
   /** Loaded MaxMind database object. */
-  private val maxmindDb: DatabaseProvider = MaxMindManager.loadMaxmind()
+  private val maxmindDb: DatabaseProvider = loadMaxmind()
+
+  /** Loaded facilities data and manager. */
+  private val facilities: FacilitiesManager = loadFacilities()
 
   /** Retrieve the MaxMind database provider. */
   fun maxmind(): DatabaseProvider = maxmindDb
@@ -76,8 +80,18 @@ class CovidmapLogic {
       && email.isNotBlank()
   }
 
-  /** Prepare a report and submit to the database. */
-  fun prepareAndSubmitReport(report: Report) {
+  /** Execute a query against the static facility dataset. */
+  fun facilityQuery(query: GenericQuery?): Future<FacilityList> {
+    TODO("not yet implemented")
+  }
 
+  /** Fetch stats for facilities nearby a given point. */
+  fun facilityStats(query: StatsQuery): Future<FacilityStatsList> {
+    TODO("not yet implemented")
+  }
+
+  /** Prepare a report and submit to the database. */
+  fun prepareAndSubmitReport(report: Report): Future<String> {
+    TODO("not yet implemented")
   }
 }
