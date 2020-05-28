@@ -15,11 +15,6 @@ load(
 )
 
 load(
-    "@npm_bazel_labs//:index.bzl",
-    "ts_proto_library",
-)
-
-load(
     "@npm_bazel_rollup//:index.bzl",
     "rollup_bundle",
 )
@@ -40,18 +35,8 @@ load(
 #
 
 style_library(
-    name = "menu-bar",
-    srcs = ["css/menuBar.css"],
-)
-
-style_library(
-    name = "loading-cover",
-    srcs = ["css/loadingCover.css"],
-)
-
-style_library(
-    name = "hospital-raw-output",
-    srcs = ["css/hospitalRawOutput.css"],
+    name = "app-main",
+    srcs = ["css/appMain.css"],
 )
 
 style_library(
@@ -60,8 +45,28 @@ style_library(
 )
 
 style_library(
-    name = "app-main",
-    srcs = ["css/appMain.css"],
+    name = "hospital-map",
+    srcs = ["css/hospitalMap.css"],
+)
+
+style_library(
+    name = "hospital-raw-output",
+    srcs = ["css/hospitalRawOutput.css"],
+)
+
+style_library(
+    name = "loading-cover",
+    srcs = ["css/loadingCover.css"],
+)
+
+style_library(
+    name = "menu-bar",
+    srcs = ["css/menuBar.css"],
+)
+
+style_library(
+    name = "single-hospital",
+    srcs = ["css/singleHospitalDetails.css"],
 )
 
 
@@ -69,11 +74,13 @@ style_binary(
     name = "ui",
     optimize = True,
     deps = [
-        ":menu-bar",
-        ":loading-cover",
-        ":hospital-raw-output",
-        ":global",
         ":app-main",
+        ":global",
+        ":hospital-map",
+        ":hospital-raw-output",
+        ":loading-cover",
+        ":menu-bar",
+        ":single-hospital",
     ],
 )
 
@@ -81,22 +88,6 @@ style_binary(
 #
 # TypeScript
 #
-
-_SOURCE_PATHS = [
-    "src/common/*",
-    "src/common/models/*",
-    "src/store/*",
-    "src/store/models/*",
-    "src/store/dataQuery/*",
-    "src/view/views/*",
-    "src/view/views/**/*",
-    "src/view/models/*",
-    "src/view/viewRegistry/*",
-    "src/dispatcher/*",
-    "src/dispatcher/models/*",
-    "src/util/*",
-    "src/bootstrap/bootstrapper",
-]
 
 ts_config(
     name = "tsconfig",
@@ -108,7 +99,10 @@ ts_module(
     name = "ts",
     runtime = "browser",
     tsconfig = ":tsconfig",
-    srcs = glob(["%s.ts" % i for i in _SOURCE_PATHS]),
+    srcs = glob(
+        include = ["src/**/*.ts"],
+        exclude = ["src/**/test/*.*"],
+    ),
     deps = [
         "@npm//@types/node",
         "@npm//crypto-random-string",

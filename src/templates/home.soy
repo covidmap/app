@@ -7,44 +7,19 @@
  * Most of the interaction here is static.
  */
 {template .layout visibility="private"}
-  {@param page: html} /** Content to inject for this individual page. */
+  {@param appContainer: string}  /** App container ID. */
+  {@param? liftedJS: js}  /** Lifted JavaScript to apply, if any. */
 
   {let $title kind="text"}
       {msg desc='Homepage title.'}COVID Impact Map{/msg}
   {/let}
 
   {call gust.page.wrap}
+    {param liftedJS: $liftedJS /}
     {param bodyClass: css('covidmap') /}
     {param content kind="html"}
         <div id="{xid('wrap')}" class="{css('mdl-layout')} {css('mdl-js-layout')}">
-          <header class="{css('mdl-layout__header')} {css('mdl-layout__header--transparent')}">
-            <div class="{css('mdl-layout__header-row')}">
-              <span class="{css('mdl-layout-title')}">{$title}</span>
-              <nav class="{css('mdl-navigation')}">
-                <a class="{css('mdl-navigation__link')} {css('active')}"
-                   href="/">{msg desc="Map nav."}Map{/msg}</a>
-                <a class="{css('mdl-navigation__link')}"
-                   href="/data">{msg desc="Raw Data nav."}Raw Data{/msg}</a>
-                <a class="{css('mdl-navigation__link')}"
-                   target="_blank"
-                   href="https://github.com/covidmap/app">{msg desc="Project nav."}Project{/msg}</a>
-              </nav>
-            </div>
-          </header>
-          <div class="{css('mdl-layout__drawer')}">
-            <span class="{css('mdl-layout-title')}">{$title}</span>
-            <nav class="{css('mdl-navigation')}">
-              <a class="{css('mdl-navigation__link')} {css('active')}"
-                 href="/">{msg desc="Map nav."}Map{/msg}</a>
-              <a class="{css('mdl-navigation__link')}"
-                 href="/data">{msg desc="Raw Data nav."}Raw Data{/msg}</a>
-              <a class="{css('mdl-navigation__link')}"
-                 target="_blank"
-                 href="https://github.com/covidmap/app">{msg desc="Project nav."}Project{/msg}</a>
-            </nav>
-          </div>
-          <main id="{xid('appContainer')}" class="{css('mdl-layout__content')}">
-              {$page}
+          <main id="{$appContainer}" class="{css('mdl-layout__content')}">
           </main>
         </div>
     {/param}
@@ -56,11 +31,11 @@
  * Render the homepage for COVID Impact Map.
  */
 {template .page}
-    {call .layout}
-        {param page kind="html"}
-            <div class="{css('loading-box')}">
-                <b>One moment please...</b>
-            </div>
-        {/param}
-    {/call}
+  {@param appContainer: string}  /** App container ID. */
+  {@param? liftedJS: js}  /** Lifted JavaScript to apply, if any. */
+
+  {call .layout}
+    {param liftedJS: $liftedJS /}
+    {param appContainer: $appContainer /}
+  {/call}
 {/template}

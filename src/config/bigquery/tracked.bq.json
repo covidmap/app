@@ -1,0 +1,167 @@
+[
+    {
+        "name": "geo",
+        "type": "RECORD",
+        "mode": "REQUIRED",
+        "fields": [
+            {
+                "name": "point",
+                "type": "GEOGRAPHY",
+                "mode": "REQUIRED"
+            },
+            {
+                "name": "latitude",
+                "type": "FLOAT",
+                "mode": "REQUIRED"
+            },
+            {
+                "name": "longitude",
+                "type": "FLOAT",
+                "mode": "REQUIRED"
+            }
+        ]
+    },
+    {
+        "name": "ids",
+        "type": "RECORD",
+        "mode": "REQUIRED",
+        "fields": [
+            {
+                "name": "object",
+                "type": "STRING",
+                "mode": "REQUIRED"
+            },
+            {
+                "name": "row",
+                "type": "STRING",
+                "mode": "REQUIRED"
+            },
+            {
+                "name": "places",
+                "type": "STRING"
+            }
+        ]
+    },
+    {
+        "name": "location",
+        "type": "RECORD",
+        "mode": "REQUIRED",
+        "fields": [
+            {
+                "name": "state",
+                "type": "STRING",
+                "mode": "REQUIRED"
+            },
+            {
+                "name": "city",
+                "type": "STRING",
+                "mode": "REQUIRED"
+            },
+            {
+                "name": "county",
+                "type": "STRING",
+                "mode": "REQUIRED"
+            },
+            {
+                "name": "country",
+                "type": "STRING",
+                "mode": "REQUIRED"
+            },
+            {
+                "name": "zip",
+                "type": "STRING"
+            },
+            {
+                "name": "address",
+                "type": "STRING"
+            }
+        ]
+    },
+    {
+        "name": "contact",
+        "type": "RECORD",
+        "mode": "NULLABLE",
+        "fields": [
+            {
+                "name": "phone",
+                "type": "STRING"
+            },
+            {
+                "name": "website",
+                "type": "STRING"
+            }
+        ]
+    },
+    {
+        "name": "owner",
+        "type": "RECORD",
+        "fields": [
+            {
+                "name": "type",
+                "type": "STRING"
+            },
+            {
+                "name": "spec",
+                "type": "STRING"
+            }
+        ]
+    },
+    {
+        "name": "capabilities",
+        "type": "RECORD",
+        "mode": "REQUIRED",
+        "fields": [
+            {
+                "name": "beds",
+                "type": "INTEGER"
+            },
+            {
+                "name": "helipad",
+                "type": "BOOLEAN"
+            },
+            {
+                "name": "trauma",
+                "type": "RECORD",
+                "fields": [
+                    {
+                        "name": "equipped",
+                        "type": "BOOLEAN"
+                    },
+                    {
+                        "name": "pediatric",
+                        "type": "BOOLEAN"
+                    },
+                    {
+                        "name": "types",
+                        "type": "STRING",
+                        "mode": "REPEATED"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "source",
+        "type": "STRING"
+    },
+    {
+        "name": "altNames",
+        "type": "STRING",
+        "mode": "REPEATED"
+    },
+    {
+        "name": "naics",
+        "type": "STRING",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "status",
+        "type": "STRING",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "open",
+        "type": "BOOLEAN",
+        "mode": "REQUIRED"
+    }
+]

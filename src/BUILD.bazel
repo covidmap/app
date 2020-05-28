@@ -9,37 +9,23 @@ load(
 )
 
 load(
+    "@bazel_tools//tools/build_defs/pkg:pkg.bzl",
+    "pkg_tar",
+)
+
+load(
     "@gust//defs/toolchain:deps.bzl",
     "maven",
 )
 
 load(
     "@gust//defs/toolchain:backend.bzl",
+    java_library = "jdk_library",
     "micronaut_library",
     "micronaut_service",
     "micronaut_controller",
     "micronaut_application",
     "micronaut_interceptor",
-)
-
-load(
-    "@npm_bazel_labs//:index.bzl",
-    "ts_proto_library",
-)
-
-load(
-    "@npm_bazel_rollup//:index.bzl",
-    "rollup_bundle",
-)
-
-load(
-    "@npm_bazel_terser//:index.bzl",
-    "terser_minified",
-)
-
-load(
-    "@npm_bazel_typescript//:index.bzl",
-    "ts_config",
 )
 
 
@@ -68,6 +54,10 @@ service(
     ]
 )
 
+pkg_tar(
+    name = "covidmap_proto_pkg",
+    srcs = [":covidmap_proto"],
+)
 
 alias(
     name = "frontend",
@@ -82,6 +72,9 @@ alias(
 micronaut_interceptor(
     name = "CovidmapInterceptor",
     srcs = ["server/CovidmapInterceptor.kt"],
+    deps = [
+        ":CovidmapLogic",
+    ]
 )
 
 micronaut_library(
@@ -103,6 +96,52 @@ micronaut_library(
     name = "CovidmapLogic",
     srcs = ["server/CovidmapLogic.kt"],
     proto_deps = [":covidmap_proto"],
+    deps = [
+        ":FacilitiesManager",
+        "@com_google_guava",
+        "@jdeps//:com_maxmind_db_maxmind_db",
+        "@jdeps//:com_maxmind_geoip2_geoip2",
+        maven("com.google.cloud:google-cloud-pubsub"),
+        maven("io.grpc:grpc-api"),
+        maven("io.grpc:grpc-services"),
+    ]
+)
+
+java_library(
+    name = "facilities-data",
+    resources = [
+        "@facilities//file:file",
+    ],
+)
+
+micronaut_library(
+    name = "FacilitiesManager",
+    srcs = ["server/FacilitiesManager.kt"],
+    proto_deps = [":covidmap_proto"],
+    deps = [
+        ":FacilitiesDecoder",
+        "@com_google_guava",
+        "@jdeps//:ch_hsr_geohash",
+        "@jdeps//:com_google_cloud_google_cloud_bigquery",
+    ],
+    resource_jars = [
+        ":facilities-data",
+    ],
+)
+
+micronaut_library(
+    name = "FacilitiesDecoder",
+    srcs = ["server/FacilityDecoder.java"],
+    proto_deps = [
+        ":covidmap_proto",
+        "@gust//gust/core:latlng_proto",
+    ],
+    deps = [
+        "@com_google_guava",
+        "@jdeps//:ch_hsr_geohash",
+        "@jdeps//:com_google_code_gson_gson",
+        "@jdeps//:com_googlecode_libphonenumber_libphonenumber",
+    ]
 )
 
 micronaut_service(
@@ -134,7 +173,7 @@ micronaut_application(
     logging_config = ":logback.xml",
     ports = ["8081", "8082"],
 
-    # -- Controllers -- #
+    # -- App Dependencies -- #
     controllers = [
         ":HomeController",
     ],
@@ -154,6 +193,10 @@ micronaut_application(
         "covidmap.skin": "@covidmap_ui//:ui",
         "covidmap.styles": "//src/frontend:styles",
     },
+
+    classpath_resources = [
+        "@maxmind//:maxmind.mmdb",
+    ],
 
     # -- Publishing / Images -- #
     native = False,

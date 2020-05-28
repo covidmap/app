@@ -1,0 +1,127 @@
+creationTime: '1585212866483'
+etag: yiIYrQkAEHW5eDoOkHlcsQ==
+id: covid-impact-map:us.tracked_tx
+kind: bigquery#table
+lastModifiedTime: '1585212866537'
+location: US
+numBytes: '0'
+numLongTermBytes: '0'
+numRows: '0'
+requirePartitionFilter: false
+schema:
+  fields:
+  - fields:
+    - mode: REQUIRED
+      name: point
+      type: GEOGRAPHY
+    - mode: REQUIRED
+      name: latitude
+      type: FLOAT
+    - mode: REQUIRED
+      name: longitude
+      type: FLOAT
+    mode: REQUIRED
+    name: geo
+    type: RECORD
+  - fields:
+    - mode: REQUIRED
+      name: object
+      type: STRING
+    - mode: REQUIRED
+      name: row
+      type: STRING
+    - mode: NULLABLE
+      name: places
+      type: STRING
+    mode: REQUIRED
+    name: ids
+    type: RECORD
+  - fields:
+    - mode: REQUIRED
+      name: state
+      type: STRING
+    - mode: REQUIRED
+      name: city
+      type: STRING
+    - mode: REQUIRED
+      name: county
+      type: STRING
+    - mode: REQUIRED
+      name: country
+      type: STRING
+    - mode: NULLABLE
+      name: zip
+      type: STRING
+    - mode: NULLABLE
+      name: address
+      type: STRING
+    mode: REQUIRED
+    name: location
+    type: RECORD
+  - fields:
+    - mode: NULLABLE
+      name: phone
+      type: STRING
+    - mode: NULLABLE
+      name: website
+      type: STRING
+    mode: NULLABLE
+    name: contact
+    type: RECORD
+  - fields:
+    - mode: NULLABLE
+      name: type
+      type: STRING
+    - mode: NULLABLE
+      name: spec
+      type: STRING
+    mode: NULLABLE
+    name: owner
+    type: RECORD
+  - fields:
+    - mode: NULLABLE
+      name: beds
+      type: INTEGER
+    - mode: NULLABLE
+      name: helipad
+      type: BOOLEAN
+    - fields:
+      - mode: NULLABLE
+        name: equipped
+        type: BOOLEAN
+      - mode: NULLABLE
+        name: pediatric
+        type: BOOLEAN
+      - mode: REPEATED
+        name: types
+        type: STRING
+      mode: NULLABLE
+      name: trauma
+      type: RECORD
+    mode: REQUIRED
+    name: capabilities
+    type: RECORD
+  - mode: NULLABLE
+    name: source
+    type: STRING
+  - mode: REPEATED
+    name: altNames
+    type: STRING
+  - mode: REQUIRED
+    name: naics
+    type: STRING
+  - mode: REQUIRED
+    name: status
+    type: STRING
+  - mode: REQUIRED
+    name: open
+    type: BOOLEAN
+selfLink: https://bigquery.googleapis.com/bigquery/v2/projects/covid-impact-map/datasets/us/tables/tracked_tx
+tableReference:
+  datasetId: us
+  projectId: covid-impact-map
+  tableId: tracked_tx
+timePartitioning:
+  requirePartitionFilter: false
+  type: DAY
+type: TABLE

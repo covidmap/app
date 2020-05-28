@@ -125,8 +125,8 @@ micronaut:
     csp:
       enabled: true
       generateNonce: true
-      reportOnly: false
-      policyDirectives: "default-src 'self' https:; font-src data: https://fonts.gstatic.com; script-src-elem 'self' https://static.cloudflareinsights.com 'nonce-{#nonceValue}';"
+      reportOnly: true
+      policyDirectives: "default-src 'self' https:; font-src 'self' data: https://fonts.gstatic.com; script-src-elem 'self' https://static.cloudflareinsights.com 'nonce-{#nonceValue}'; img-src 'self' data: https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/css;"
 
   executors:
     io:

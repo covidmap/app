@@ -1,0 +1,13 @@
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+test_suite(
+    name = "suite",
+    testonly = True,
+    tests = [
+        "//javatests/util:FacilitiesDataTest",
+        "//javatests/util:GeohashConsistencyTest",
+    ],
+)

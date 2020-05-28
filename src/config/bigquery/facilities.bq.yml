@@ -1,0 +1,73 @@
+creationTime: '1585202565048'
+description: Healthcare facilities tracked by the COVAID/COVID Impact Map application.
+etag: unx4fRJ7R/bxAOrN2qftnQ==
+id: covid-impact-map:us.facilities
+kind: bigquery#table
+labels:
+  data_type: facilities
+  region: us
+lastModifiedTime: '1585210668850'
+location: US
+numBytes: '2730067'
+numLongTermBytes: '0'
+numRows: '7575'
+schema:
+  fields:
+  - name: latitude
+    type: FLOAT
+  - name: longitude
+    type: FLOAT
+  - name: state
+    type: STRING
+  - name: city
+    type: STRING
+  - name: name
+    type: STRING
+  - name: objectId
+    type: STRING
+  - name: rowId
+    type: STRING
+  - name: address
+    type: STRING
+  - name: zip
+    type: INTEGER
+  - name: telephone
+    type: STRING
+  - name: type
+    type: STRING
+  - name: status
+    type: STRING
+  - name: open
+    type: BOOLEAN
+  - name: county
+    type: STRING
+  - name: country
+    type: STRING
+  - name: naicsCode
+    type: STRING
+  - name: naicsDesc
+    type: STRING
+  - name: source
+    type: STRING
+  - name: website
+    type: STRING
+  - name: altName
+    type: STRING
+  - name: owner
+    type: STRING
+  - name: ownerType
+    type: STRING
+  - name: beds
+    type: INTEGER
+  - name: trauma
+    type: STRING
+  - name: pediatric
+    type: BOOLEAN
+  - name: helipad
+    type: BOOLEAN
+selfLink: https://bigquery.googleapis.com/bigquery/v2/projects/covid-impact-map/datasets/us/tables/facilities
+tableReference:
+  datasetId: us
+  projectId: covid-impact-map
+  tableId: facilities
+type: TABLE

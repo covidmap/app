@@ -9,13 +9,17 @@ ARGS ?=
 CI ?= no
 APP ?= //:app
 ACTION ?= replace
+API_TARGET ?= //src:covidmap_proto_pkg
+API_PACKAGE ?= dist/bin/src/covidmap_proto_pkg.tar
 IMAGE_TARGET ?= //src:CovidMapServer-image
 TARGETS ?= $(APP)
 VERBOSE ?= no
 QUIET ?= yes
 CACHE ?= no
 STRICT ?= no
+COVERAGE ?= no
 BASE_ARGS ?= --define=covidmap_release_tag=$(VERSION)
+TEST_ARGS ?= $(BASE_ARGS)
 BAZELISK_ARGS ?=
 CACHE_KEY ?= CovidMap
 RELEASE ?= no
@@ -24,12 +28,35 @@ PROJECT ?= bloom-sandbox
 RBE_INSTANCE ?= default_instance
 IMAGE_PROJECT ?= covid-impact-map
 
+COVERABLE ?= //javatests:suite
+COVERAGE_REPORT ?= $(REPORTS)/coverage
+COVERAGE_ARGS ?= --function-coverage \
+                 --branch-coverage \
+                 --highlight \
+                 --demangle-cpp \
+                 --show-details \
+                 --title "$(PROJECT_NAME)" \
+                 --precision 2 \
+                 --legend \
+                 --rc genhtml_med_limit=60 \
+                 --rc genhtml_hi_limit=90
+
+BAZEL_BUILD_FLAGS ?= --protocopt=--include_imports --protocopt=--include_source_info
+TEST_ARGS_WITH_COVERAGE ?= --combined_report=lcov --nocache_test_results
+
+# Flag: `COVERAGE`
+ifeq ($(COVERAGE),yes)
+TEST_COMMAND ?= coverage
+TEST_ARGS += $(TEST_ARGS_WITH_COVERAGE)
+else
+TEST_COMMAND ?= test
+endif
 
 # Flag: `RELEASE`
 ifeq ($(RELEASE),yes)
-ARGS += --compilation_mode=opt
+ARGS += --compilation_mode=opt $(BAZEL_BUILD_FLAGS)
 else
-ARGS += --compilation_mode=dbg
+ARGS += --compilation_mode=dbg $(BAZEL_BUILD_FLAGS)
 endif
 
 # Flag: `CI`
@@ -45,6 +72,8 @@ IBAZEL ?= $(shell which ibazel)
 BAZELISK ?= $(shell which bazelisk)
 GENHTML ?= $(shell which genhtml)
 endif
+
+GCLOUD ?= $(shell which gcloud)
 
 # Flag: `STRICT`.
 ifeq ($(STRICT),yes)
@@ -63,7 +92,7 @@ endif
 ifeq ($(DEBUG),yes)
 VERBOSE = yes
 QUIET = no
-BASE_ARGS += --sandbox_debug
+BASE_ARGS += --sandbox_debug --test_output=errors
 endif
 
 # Flag: `VERBOSE`
@@ -76,6 +105,8 @@ else
 # Flag: `QUIET`
 ifeq ($(QUIET),yes)
 _RULE = @
+else
+BASE_ARGS += --test_output=errors
 endif
 endif
 
@@ -106,7 +137,20 @@ deploy:  ## Deploy the app to production.
 	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) run $(BASE_ARGS) $(ARGS) -- //src/config:app.$(ACTION)
 
 test:  ## Run any testsuites.
-	@echo "No tests yet."
+	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) $(TEST_COMMAND) $(TEST_ARGS) $(ARGS) -- //javatests:suite
+
+api:  ## Build and deploy the API service endpoint.
+	@echo "Building API binary..."
+	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) build $(BASE_ARGS) $(ARGS) -- $(API_TARGET)
+	@echo "Extracting API info..."
+	$(_RULE)rm -f src/config/api/covidmap.pb
+	$(_RULE)tar -C src/config/api $(POSIX_FLAGS) -xzf $(API_PACKAGE) && mv src/config/api/covidmap_proto-descriptor-set.proto.bin src/config/api/covidmap.pb
+	@echo "Deploying API configuration..."
+	$(_RULE)$(GCLOUD) --project=$(IMAGE_PROJECT) endpoints services deploy src/config/api/covidmap.pb src/config/api/covidmap.yml
+
+update:  ## Update Java and Git submodule dependencies via Bazel pins.
+	$(_RULE)git submodule update --remote ui
+	$(_RULE)$(BAZELISK) $(BAZELISK_ARGS) run $(BASE_ARGS) $(ARGS) -- @unpinned_jdeps//:pin
 
 report-coverage:
 	@echo "No coverage reporting yet."
@@ -133,5 +177,5 @@ forceclean: distclean  ## DANGEROUS: Wipe all local changes and force-reset code
 	@git clean -xdf
 
 
-.PHONY: all build run help clean distclean forceclean test report-coverage report-tests
+.PHONY: all build run help clean distclean forceclean test report-coverage report-tests update
 

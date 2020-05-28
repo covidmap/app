@@ -46,8 +46,44 @@ message Facility {
     string object_id = 2;
   }
 
-  // Type of this facility, which also indicates the ownership/governance structure.
+  // Specifies the general type of facility. These categories derive from the raw dataset provided by Pug.
   enum FacilityType {
+    // Unrecognized or unresolved type of facility.
+    UNRECOGNIZED_FACILITY_TYPE = 0;
+
+    // `General Acute Care`.
+    GENERAL_ACUTE_CARE = 1;
+
+    // `Critical Access`.
+    CRITICAL_ACCESS = 2;
+
+    // `Psychiatric`
+    PSYCHIATRIC = 3;
+
+    // `Long Term Care`
+    LONG_TERM_CARE = 4;
+
+    // `Rehabilitation`
+    REHABILITATION = 5;
+
+    // `Military`
+    MILITARY = 6;
+
+    // `Children`
+    CHILDREN = 7;
+
+    // `Special`
+    SPECIAL = 8;
+
+    // `Women`
+    WOMEN = 9;
+
+    // `Chronic Disease`
+    CHRONIC_DISEASE = 10;
+  }
+
+  // Type of this facility, which also indicates the ownership/governance structure.
+  enum FacilityGovernance {
     // Unknown facility type.
     UNKNOWN_TYPE = 0;
 
@@ -61,12 +97,58 @@ message Facility {
     NON_PROFIT = 3;
   }
 
-  // Specifies the general category which broadly identifies the type of facility described by this record. These
-  // categories equate with NAICS codes. Each facility is assigned code, which is how this category is resolved for each
-  // record when it is being written.
-  enum FacilityCategory {
-    // We do not know the category associated with a given record.
-    UNKNOWN_CATEGORY = 0;
+  // Enumerates the types of trauma equipment levels a facility may comply with/offer/support.
+  enum TraumaType {
+    // Unrecognized type of trauma support for a given facility.
+    UNRECOGNIZED_TRAUMA_TYPE = 0;
+
+    // Level 1 Trauma Center.
+    LEVEL_1 = 1;
+
+    // Level 2 Trauma Center.
+    LEVEL_2 = 2;
+
+    // Level 3 Trauma Center.
+    LEVEL_3 = 3;
+
+    // Level 4 Trauma Center.
+    LEVEL_4 = 4;
+
+    // Level 5 Trauma Center.
+    LEVEL_5 = 5;
+
+    // Unknown.
+    TRH = 6;
+
+    // Unknown.
+    TRF = 7;
+
+    // Unknown.
+    CTH = 8;
+
+    // Unknown.
+    CTF = 9;
+
+    // Unknown.
+    ATH = 10;
+
+    // Unknown.
+    RTC = 11;
+
+    // Unknown.
+    RTH = 12;
+
+    // Unknown.
+    AREA = 13;
+
+    // Unknown.
+    TRAUMA_SYSTEM_HOSPITAL = 15;
+
+    // Unknown.
+    PARC = 16;
+
+    // Unknown.
+    RPTC = 17;
   }
 
   // Describes, in detail, the location of a given healthcare facility, in multiple representations to facilitate
@@ -187,20 +269,32 @@ message Facility {
   // Specifies the capabilities for a given facility, at least those that are known to the system. This includes the
   // number of beds, whether the facility is enabled/equipped for trauma, and so on.
   message FacilityCapabilities {
+    // Specifies a trauma capability supported by a given facility.
+    message TraumaCapability {
+      // Major type of the trauma capability.
+      TraumaType trauma_type = 1;
+
+      // Whether there is a pediatric modifier.
+      bool pediatric = 2;
+    }
+
     // Marked if the facility has a helipad.
     bool helipad = 1;
 
-    // Marked if the facility is equipped for trauma.
-    bool trauma = 2;
-
     // Number of regular beds in this facility.
-    uint32 beds = 3;
+    uint32 beds = 2;
 
     // Size of this hospital's ICU, by bed count, if known.
-    uint32 icu = 4;
+    uint32 icu = 3;
 
     // Total number of ventilators this facility has access to on a regular/normal basis.
-    uint32 ventilators = 5;
+    uint32 ventilators = 4;
+
+    // Types of trauma equipment/support offered at this facility.
+    repeated TraumaCapability trauma = 5;
+
+    // Whether this facility supports pediatric care.
+    bool pediatric = 6;
   }
 
   // Auto-generated unique key for this facility, and other unique identifying details bound to this individual facility
@@ -208,30 +302,36 @@ message Facility {
   FacilityKey key = 1 [(core.field).type = KEY];
 
   // Describes the type of facility specified by this record.
-  FacilityType type = 2;
+  FacilityGovernance governance = 2;
 
-  // Specifies the broad category assigned to classify this facility.
-  FacilityCategory category = 3;
+  // Specifies general type of facility.
+  FacilityType type = 3;
+
+  // Whether this facility is open or closed.
+  bool open = 4;
+
+  // Specifies the NAICS category description assigned to classify this facility.
+  string category = 5;
 
   // Display name for the facility.
-  string name = 4;
+  string name = 6;
 
   // Alternate names for this facility.
-  repeated string alternate_name = 5;
+  repeated string alternate_name = 7;
 
   // Location details for this facility.
-  FacilityLocation location = 6;
+  FacilityLocation location = 8;
 
   // Contact information for this facility, potentially including email addresses, phone numbers,
-  FacilityContact contact = 7;
+  FacilityContact contact = 9;
 
   // `NAICS` code, for the facility, which describes the type of facility (in general terms). Stands for North American
   // Industry Classification System. Only present for US facilities. This code is further matched/resolved to produce
   // the `category` value assigned to this facility.
-  string naics = 8;
+  string naics = 10;
 
   // Specifies the capabilities known to exist at this facility.
-  FacilityCapabilities capabilities = 9;
+  FacilityCapabilities capabilities = 11;
 }
 
 
@@ -373,20 +473,23 @@ message Report {
   // Specifies a salted hash of the submitter's email address, so that their reports may be grouped/de-duped.
   string submitter = 2;
 
+  // Rough geo-hash of the report's origin, based on the user's IP.
+  string geohash = 3;
+
   // Source information for this report submission.
-  ReportSourcing source = 3;
+  ReportSourcing source = 4;
 
   // Reports answers to the survey questions submitted by the user as part of this report.
-  ReportQuestions survey = 4;
+  ReportQuestions survey = 5;
 
   // Notes to apply to the report, in free-form, with limited support for Markdown-based formatting.
-  string notes = 5;
+  string notes = 6;
 
   // Timestamp indicating when this record was last modified.
-  google.protobuf.Timestamp modified = 6 [(core.field).stamp_update = true];
+  google.protobuf.Timestamp modified = 7 [(core.field).stamp_update = true];
 
   // Timestamp indicating when this record was originally created.
-  google.protobuf.Timestamp created = 7 [(core.field).stamp_create = true];
+  google.protobuf.Timestamp created = 8 [(core.field).stamp_create = true];
 }
 
 
@@ -474,6 +577,19 @@ message FacilityStatsList {
 }
 
 
+// Specifies a report that is being submitted from the app frontend.
+message ReportSubmission {
+  // Specifies the report being submitted.
+  Report report = 1;
+
+  // Email address of the person submitting the report.
+  string email = 2;
+
+  // Specifies the facility to which this report is relevant.
+  Facility.FacilityKey facility = 3;
+}
+
+
 // Defines the main API that powers the COVID Impact Map application.
 service App {
   option (google.api.default_host) = "rpc.covidmap.link";
@@ -483,6 +599,12 @@ service App {
   // the result is an empty successful response.
   rpc Health(google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http).get = "/v1/health";
+  }
+
+  // Fetch an individual healthcare facility, addressed by its row ID (as specified in the raw dataset included in the
+  // source code of this project). If it cannot be found, 404 will be returned.
+  rpc FacilityByKey(Facility.FacilityKey) returns (Facility) {
+    option (google.api.http).get = "/v1/facilities/{id}";
   }
 
   // Produce a list of known healthcare facilities, for which the COVID Impact Map tracker receives reports. This
@@ -495,5 +617,14 @@ service App {
   // specified, stats are read (they are pre-calculated), and shuttled back to the client.
   rpc Stats(StatsQuery) returns (FacilityStatsList) {
     option (google.api.http).post = "/v1/stats";
+  }
+
+  // Supplies an endpoint to submit a report to the application. Reports are accepted by the app at this endpoint from
+  // any source (within reason, and quotas apply).
+  rpc Report(ReportSubmission) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/report/{facility.id}"
+      body: "*"
+    };
   }
 }

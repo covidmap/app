@@ -1,11 +1,11 @@
 
 package server
 
+import gust.backend.runtime.Logging
 import io.grpc.ServerBuilder
 import io.grpc.protobuf.services.ProtoReflectionService
 import io.micronaut.context.event.BeanCreatedEvent
 import io.micronaut.context.event.BeanCreatedEventListener
-import org.slf4j.LoggerFactory
 import javax.inject.Singleton
 
 
@@ -15,7 +15,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class ReflectionService: BeanCreatedEventListener<ServerBuilder<*>> {
-  private val logging = LoggerFactory.getLogger(ReflectionService::class.java)
+  private val logging = Logging.logger(ReflectionService::class.java)
 
   override fun onCreated(event: BeanCreatedEvent<ServerBuilder<*>>): ServerBuilder<*> {
     // skip `AppService`/`CovidMapInterceptor` - they are installed by default

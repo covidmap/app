@@ -103,10 +103,10 @@ spec:
           resources:
             requests:
               cpu: "0.2"
-              memory: "400Mi"
+              memory: "1Gi"
             limits:
               cpu: "0.6"
-              memory: "512Mi"
+              memory: "1Gi"
           volumeMounts:
             - name: tls
               mountPath: /etc/ssl/covidmap

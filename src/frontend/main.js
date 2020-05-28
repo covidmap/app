@@ -23,13 +23,63 @@ goog.scope(function() {
   };
 
   /**
+   * Pull init data from the DOM at this ID.
+   *
+   * @type {!string}
+   * @const
+   */
+  const dataElement = 'page-data_';
+
+  // noinspection UseOfBracketNotationInspection
+  /**
+   * @type {!function(!string, *): void}
+   * @const
+   */
+  const appBoot = /** @type {!function(?string): void} */ (window['__boot']);
+
+  let mapsLoaded = false;
+
+  // noinspection UseOfBracketNotationInspection
+  /**
+   * @suppress {checkDebuggerStatement}
+   * @private
+   */
+  window['__init_map'] = function() {
+    document.addEventListener('DOMContentLoaded',() => {
+      if (!mapsLoaded) {
+        mapsLoaded = true;
+        logging.info('Initializing Google Maps.');
+
+        // noinspection UseOfBracketNotationInspection
+        window['dispatcher']['dispatch'](window['DISPATCHER_MESSAGES']['MapReady'], true);
+        // noinspection UseOfBracketNotationInspection
+        window['dispatcher']['dispatch'](window['DISPATCHER_MESSAGES']['SetLoadingFalse'], true);
+      }
+    });
+  };
+
+  /**
    * Bootstrap function, starts the COVID Map app.
+   *
+   * @suppress {checkDebuggerStatement,reportUnknownTypes}
    */
   function main() {
-    console.log('Firebase details: ', firebaseConfig);
+    const appContainer = /** @type {!string} */ (AppConfig.getAppContainerId());
+    const dataContainer = document.getElementById(dataElement);
+    let initData = {};
+    if (!!dataContainer) {
+      try {
+        initData = JSON.parse(dataContainer.innerText);
+      } catch (err) {
+        logging.error('Failed to initialize page data.', {err});
+        initData = {};
+      }
+    }
+    logging.info('Booting COVID Impact Map...', {'container': appContainer, 'data': initData});
+    appBoot(appContainer, initData);
 
     // noinspection UseOfBracketNotationInspection
-    window['test'] = function() {
+    function rpcTest() {
       logging.info('Starting test...');
       const api = AppAPI.acquire();
       const op = api.ping();
@@ -39,13 +89,16 @@ goog.scope(function() {
       }, (err) => {
         console.error('Test failed.', {'err': err});
       });
-    };
+    }
 
-    setTimeout(() => {
-      window['test']();
-    }, 1000);
+    if (window.location.origin.indexOf('localhost') === -1) {
+      setTimeout(() => {
+        // noinspection UseOfBracketNotationInspection
+        rpcTest();
+      }, 1000);
+    }
   }
 
   // mount up our main function
-  window.addEventListener('load', main, undefined);
+  document.addEventListener('DOMContentLoaded', main, undefined);
 });

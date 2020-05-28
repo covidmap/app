@@ -27,6 +27,8 @@ load(
     "style_library",
 )
 
+OPTIMIZE_STYLES = False
+
 
 ## Frontend: Styles
 
@@ -48,7 +50,7 @@ style_library(
 
 style_binary(
     name = "mdl",
-    optimize = True,
+    optimize = OPTIMIZE_STYLES,
     deps = [
         "@mdl//:animation-styles",
         "@mdl//:button-styles",
@@ -62,7 +64,7 @@ style_binary(
 style_binary(
     name = "styles",
     src = "app.scss",
-    optimize = True,
+    optimize = OPTIMIZE_STYLES,
     deps = [
         ":style-base",
     ],
@@ -78,7 +80,7 @@ js_module(
         "@gust//js/gust:logging",
         "@gust//java/gust:Core-j2cl",
         js_service("//src:covidmap_proto"),
-        js_proto("@gust//js:empty_proto"),
+        js_proto("@gust//gust/core:empty_proto"),
     ],
 )
 

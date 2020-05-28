@@ -1,0 +1,34 @@
+
+load(
+    "@gust//defs/toolchain:deps.bzl",
+    "javaproto",
+)
+
+load(
+    "@gust//defs/toolchain/java:testing.bzl",
+    java_test = "java_junit5_test",
+)
+
+java_test(
+    name = "GeohashConsistencyTest",
+    srcs = ["GeohashConsistencyTest.java"],
+    deps = ["@jdeps//:ch_hsr_geohash"],
+    test_package = "util",
+    classpath_resources = [
+        "@gust//java/gust:logback.xml",
+    ],
+)
+
+java_test(
+    name = "FacilitiesDataTest",
+    srcs = ["FacilitiesDataTest.java"],
+    deps = [
+        "//src:FacilitiesManager",
+        javaproto("@gust//gust/core:latlng_proto"),
+    ],
+    test_package = "util",
+    resource_jars = ["//src:facilities-data"],
+    classpath_resources = [
+        "@gust//java/gust:logback.xml",
+    ],
+)

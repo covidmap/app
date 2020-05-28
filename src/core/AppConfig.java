@@ -6,9 +6,13 @@ import jsinterop.annotations.JsType;
 
 /** Holds static credentials in a cross-platform lib. */
 @JsType
+@SuppressWarnings("unused")
 public final class AppConfig {
   /** API endpoint to use. */
-  private static final String apiEndpoint = "rpc.covidmap.link";
+  private static final String apiEndpoint = "https://beta.covidmap.link/v1/";
+
+  /** App container ID to expose. */
+  private static final String appContainerId = "appContainer";
 
   /** Static config values for Firebase. */
   @JsType
@@ -21,6 +25,16 @@ public final class AppConfig {
     private static final String messagingSenderId = "651878046665";
     private static final String appId = "1:651878046665:web:b50041ea8857edabe6e618";
     private static final String measurementId = "G-Q07TZ2VYKG";
+  }
+
+  /** Configuration for Algolia. */
+  @JsType
+  public static final class Algolia {
+    /** Application ID to use. */
+    private static final String appId = "BHFN217Q8E";
+
+    /** API key to use (only allows search - no writes). */
+    private static final String apiKey = "24081f5151284b3245ba17663dea34ca";
   }
 
   /** @return Firebase API key. */
@@ -66,5 +80,10 @@ public final class AppConfig {
   /** @return API endpoint to make use of. */
   @JsMethod public static String getApiEndpoint() {
     return apiEndpoint;
+  }
+
+  /** @return Application container ID. */
+  @JsMethod public static String getAppContainerId() {
+    return appContainerId;
   }
 }

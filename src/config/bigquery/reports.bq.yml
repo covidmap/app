@@ -1,0 +1,132 @@
+clustering:
+  fields:
+  - facility
+creationTime: '1585214826052'
+etag: 6Cp6jbt/grunkeZM/kFgXQ==
+id: covid-impact-map:us.reports
+kind: bigquery#table
+lastModifiedTime: '1585214826114'
+location: US
+numBytes: '0'
+numLongTermBytes: '0'
+numRows: '0'
+schema:
+  fields:
+  - mode: REQUIRED
+    name: received
+    type: TIMESTAMP
+  - mode: REQUIRED
+    name: ingested
+    type: TIMESTAMP
+  - mode: REQUIRED
+    name: facility
+    type: STRING
+  - fields:
+    - mode: NULLABLE
+      name: ip
+      type: BYTES
+    - mode: NULLABLE
+      name: identity
+      type: STRING
+    - mode: NULLABLE
+      name: tz
+      type: STRING
+    - mode: NULLABLE
+      name: local
+      type: TIMESTAMP
+    - fields:
+      - mode: NULLABLE
+        name: firstHand
+        type: BOOLEAN
+      - mode: NULLABLE
+        name: secondHand
+        type: BOOLEAN
+      - mode: NULLABLE
+        name: socialMedia
+        type: BOOLEAN
+      - mode: NULLABLE
+        name: healthcare
+        type: BOOLEAN
+      - mode: NULLABLE
+        name: uri
+        type: STRING
+      - mode: NULLABLE
+        name: description
+        type: STRING
+      mode: NULLABLE
+      name: sourcing
+      type: RECORD
+    - fields:
+      - mode: NULLABLE
+        name: point
+        type: GEOGRAPHY
+      - mode: NULLABLE
+        name: latitude
+        type: FLOAT
+      - mode: NULLABLE
+        name: longitude
+        type: FLOAT
+      - mode: NULLABLE
+        name: hash
+        type: STRING
+      mode: NULLABLE
+      name: location
+      type: RECORD
+    mode: REQUIRED
+    name: reporter
+    type: RECORD
+  - fields:
+    - mode: REQUIRED
+      name: positive
+      type: BOOLEAN
+    - mode: NULLABLE
+      name: waitTime
+      type: INTEGER
+    - fields:
+      - mode: NULLABLE
+        name: better
+        type: BOOLEAN
+      - mode: NULLABLE
+        name: worse
+        type: BOOLEAN
+      mode: NULLABLE
+      name: delta
+      type: RECORD
+    - fields:
+      - fields:
+        - mode: NULLABLE
+          name: known
+          type: STRING
+        - mode: NULLABLE
+          name: other
+          type: STRING
+        - mode: NULLABLE
+          name: shortage
+          type: BOOLEAN
+        - mode: NULLABLE
+          name: pressure
+          type: BOOLEAN
+        - mode: NULLABLE
+          name: suppliesFor
+          type: INTEGER
+        mode: REPEATED
+        name: underPressure
+        type: RECORD
+      mode: NULLABLE
+      name: resources
+      type: RECORD
+    - mode: NULLABLE
+      name: notes
+      type: STRING
+    mode: REQUIRED
+    name: report
+    type: RECORD
+selfLink: https://bigquery.googleapis.com/bigquery/v2/projects/covid-impact-map/datasets/us/tables/reports
+tableReference:
+  datasetId: us
+  projectId: covid-impact-map
+  tableId: reports
+timePartitioning:
+  field: received
+  type: DAY
+type: TABLE

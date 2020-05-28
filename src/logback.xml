@@ -28,5 +28,5 @@
 <!--    <logger name="gust.backend.BaseController" level="TRACE" />-->
 <!--    <logger name="gust.backend.AppController" level="TRACE" />-->
 <!--    <logger name="gust.backend.AssetController" level="TRACE" />-->
-<!--    <logger name="server.HomeController" level="DEBUG" />-->
+    <logger name="server.HomeController" level="TRACE" />
 </configuration>

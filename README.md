@@ -26,6 +26,7 @@ You can run `make help` to get a list of local dev commands. That should output 
 ```
 COVID Impact Map:
 
+api                            Build and deploy the API service endpoint.
 build                          Build the app.
 clean                          Clean ephemeral build targets.
 deploy                         Deploy the app to production.
@@ -38,6 +39,7 @@ image                          Build a container image for the app, locally.
 push                           Build and publish a container image for the app, tagged with the current source tree hash.
 run                            Run the app locally.
 test                           Run any testsuites.
+update                         Update Java and Git submodule dependencies via Bazel pins.
 ```
 
 So you can just run `make build` to build the app, or `make run` to run it locally. If you run it locally, the app will be available at [`http://localhost:8080`](http://localhost:8080) by default.
